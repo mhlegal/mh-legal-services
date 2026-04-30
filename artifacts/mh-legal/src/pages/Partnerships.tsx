@@ -8,8 +8,8 @@ import { siteConfig } from "@/lib/site-config";
 
 export default function Partnerships() {
   useSeo({
-    title: "Partnerships | Collaborate With Us",
-    description: "Partner with MH LEGAL. We provide scalable business solutions, operational assistance, and trained personnel to support your corporate growth."
+    title: "Partnerships | Collaborate With MH LEGAL",
+    description: "Partner with MH LEGAL — a South African brokerage firm offering insurance brokerage, sales operations, business solutions, and trained talent to drive your growth."
   });
 
   return (
@@ -40,7 +40,7 @@ export default function Partnerships() {
             transition={{ delay: 0.2 }}
             className="mt-8 text-xl text-gray-400 max-w-2xl font-light leading-relaxed"
           >
-            We view our clients as partners. By opening doors to long-term collaboration, we align our strategic expertise and human capital directly with your commercial objectives.
+            We treat clients as partners in growth. Our brokerage practice, sales operations, and business solutions are built to align directly with your commercial objectives — and the talent to back it all up comes from inside our own training program.
           </motion.p>
         </div>
       </section>
@@ -145,7 +145,7 @@ export default function Partnerships() {
         <div className="container mx-auto px-4 md:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl md:text-4xl font-serif font-bold mb-6">Partnership Models</h2>
-            <p className="text-gray-600 text-lg">We offer distinct avenues of collaboration, each designed to integrate seamlessly with your corporate structure.</p>
+            <p className="text-gray-600 text-lg">Three distinct ways to work with the firm — built around brokerage support, talent placement, and long-term growth.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -159,7 +159,7 @@ export default function Partnerships() {
               <Cog className="w-10 h-10 text-accent mb-6" />
               <h3 className="text-2xl font-serif font-bold mb-4">Service-Based</h3>
               <p className="text-gray-400 leading-relaxed">
-                Direct intervention. We assist with your business operations, auditing current workflows and implementing resilient administrative or legal systems.
+                Direct engagement. We deliver insurance brokerage, sales operations support, or business solutions tailored to the specific challenge in front of your team.
               </p>
             </motion.div>
 
@@ -174,7 +174,7 @@ export default function Partnerships() {
               <UserPlus className="w-10 h-10 text-black mb-6" />
               <h3 className="text-2xl font-serif font-bold mb-4">Placement-Based</h3>
               <p className="text-zinc-800 font-medium leading-relaxed">
-                Human capital augmentation. We provide capable, trained individuals from our In-Service program to directly reinforce your teams and execute operational tasks.
+                Talent augmentation. We place trained Business Management students from our In-Service program directly into your sales, brokerage, or operational teams.
               </p>
             </motion.div>
 
@@ -209,8 +209,8 @@ export default function Partnerships() {
                     <span className="font-serif font-bold text-accent">01</span>
                   </div>
                   <div>
-                    <h4 className="font-bold text-lg mb-2">Business Support Solutions</h4>
-                    <p className="text-gray-600">Actionable interventions designed to stabilize and grow corporate entities.</p>
+                    <h4 className="font-bold text-lg mb-2">Insurance Brokerage</h4>
+                    <p className="text-gray-600">Personal and commercial insurance brokerage that protects what your business has built.</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -218,8 +218,8 @@ export default function Partnerships() {
                     <span className="font-serif font-bold text-accent">02</span>
                   </div>
                   <div>
-                    <h4 className="font-bold text-lg mb-2">Targeted Operational Assistance</h4>
-                    <p className="text-gray-600">Specialized oversight across administrative workflows, sales pipelines, and recurring back-office functions.</p>
+                    <h4 className="font-bold text-lg mb-2">Sales Management</h4>
+                    <p className="text-gray-600">Hands-on sales operations — pipeline structure, conversion tracking, and the cadence that drives consistent revenue.</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -228,7 +228,7 @@ export default function Partnerships() {
                   </div>
                   <div>
                     <h4 className="font-bold text-lg mb-2">Trained Personnel Access</h4>
-                    <p className="text-gray-600">Direct integration of driven individuals sourced from our rigorous training initiative.</p>
+                    <p className="text-gray-600">Driven Business Management students placed into your team straight from our In-Service Training program.</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">

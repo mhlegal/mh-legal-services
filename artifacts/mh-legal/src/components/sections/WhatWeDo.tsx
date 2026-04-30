@@ -1,31 +1,31 @@
 import { motion } from "framer-motion";
-import { Scale, Users, Handshake, Cog } from "lucide-react";
+import { ShieldCheck, TrendingUp, Cog, GraduationCap } from "lucide-react";
 import { Link } from "wouter";
 
 const services = [
   {
+    title: "Insurance Brokerage",
+    description: "Tailored insurance brokerage that protects what your business has built. We match clients to the right cover, manage the relationship, and turn insurance into a strategic advantage rather than an afterthought.",
+    icon: <ShieldCheck className="w-8 h-8" />,
+    link: "/services"
+  },
+  {
+    title: "Sales Operations",
+    description: "Structured sales management that converts effort into measurable revenue. We build pipelines, sharpen processes, and embed the discipline that high-performing sales teams need to scale.",
+    icon: <TrendingUp className="w-8 h-8" />,
+    link: "/services"
+  },
+  {
     title: "Business Solutions",
-    description: "Structured frameworks, policies, and processes that move from reactive problem-solving to proactive systems. Built to scale with your enterprise, not slow it down.",
-    icon: <Scale className="w-8 h-8" />,
-    link: "/contact"
+    description: "Practical, growth-oriented business solutions — operating procedures, administrative systems, and frameworks that move enterprises from reactive to proactive.",
+    icon: <Cog className="w-8 h-8" />,
+    link: "/services"
   },
   {
     title: "In-Service Training",
-    description: "Your systems are only as robust as the people executing them. We develop comprehensive training programs that align workforce capabilities with strategic objectives.",
-    icon: <Users className="w-8 h-8" />,
-    link: "/contact"
-  },
-  {
-    title: "Strategic Partnerships",
-    description: "We do not merely advise; we integrate. By partnering with executive teams, we align operational strategy directly with commercial viability and growth objectives.",
-    icon: <Handshake className="w-8 h-8" />,
-    link: "/contact"
-  },
-  {
-    title: "Operational Efficiency",
-    description: "Identifying friction points across day-to-day operations and implementing precise, structured processes that enhance productivity and reduce institutional risk.",
-    icon: <Cog className="w-8 h-8" />,
-    link: "/contact"
+    description: "We grow the next generation of business leaders. Business Management students embed inside our sales and brokerage teams to gain real commercial experience under real pressure.",
+    icon: <GraduationCap className="w-8 h-8" />,
+    link: "/training"
   }
 ];
 
@@ -40,11 +40,11 @@ export function WhatWeDo() {
               <span className="text-accent uppercase tracking-widest text-sm font-semibold">Service Pillars</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-serif font-bold leading-tight">
-              Engineering <span className="text-gray-400 font-light italic">Scalability</span>
+              Building Businesses. <span className="text-gray-400 font-light italic">Building Careers.</span>
             </h2>
           </div>
           <p className="text-gray-600 max-w-md md:text-right leading-relaxed">
-            MH LEGAL is a multi-disciplinary professional services firm. We blend operational know-how, business strategy, and people development to give growing enterprises a structural advantage.
+            MH LEGAL is a brokerage firm with a wider mandate. We sell insurance, run high-performing sales operations, and build business solutions — and we develop the people who deliver them.
           </p>
         </div>
 

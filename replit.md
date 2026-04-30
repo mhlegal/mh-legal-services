@@ -30,10 +30,11 @@ See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and pa
 
 ### `artifacts/mh-legal` (web — React + Vite, slug `/`)
 
-Marketing website for **MH LEGAL**, a South African multi-disciplinary professional services firm.
+Marketing website for **MH LEGAL**, a South African brokerage firm.
 
 - **Tagline**: "We Build Systems. We Develop People."
-- **Positioning**: Multi-disciplinary professional services firm — operational systems, business solutions, in-service training, trained personnel placement, and strategic partnerships. Industry-agnostic; **never frame the firm as automotive/dealership-specific**.
+- **Positioning**: Brokerage firm with three core service lines — **Insurance Brokerage**, **Sales Operations** (referred to in cards as "Sales Management"), and **Business Solutions**. The firm also runs an **In-Service Training** program that embeds Business Management students inside the sales/brokerage teams. Tone: professional, high-energy, growth-oriented. **Never frame the firm as automotive/dealership-specific or as "desk management".**
+- **In-Service Training requirement**: Applicants must currently be studying **Business Management** at a recognized institution. Training takes place inside live sales/brokerage operations.
 - **Leadership**: Managing Director — Philani Mbooi (defined in `src/lib/site-config.ts` under `leadership.managingDirector`).
 - **Contact**: WhatsApp +27 73 785 3867 (https://wa.me/27737853867), email `info@mhlegal.co.za`.
 - **Pages**: Home, About, Services, Training, Partnerships, Contact (driven by `src/lib/site-config.ts` nav).

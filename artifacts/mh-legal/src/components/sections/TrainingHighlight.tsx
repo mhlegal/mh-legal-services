@@ -19,10 +19,10 @@ export function TrainingHighlight() {
               <span className="text-accent uppercase tracking-widest text-sm font-semibold">Human Capital</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-serif font-bold leading-tight">
-              We Develop Talent While Building Businesses.
+              Growing the Next Generation of Business Leaders.
             </h2>
             <p className="text-lg text-gray-600 leading-relaxed font-light">
-              Through our rigorous In-Service Training program, we embed ambitious students into active corporate environments. We don't just build operational systems—we develop the professionals required to execute them flawlessly.
+              Our In-Service Training program embeds ambitious Business Management students directly inside our sales and brokerage teams. We sell insurance every day — and we develop the professionals who will sell, broker, and lead for the next generation.
             </p>
             <div className="pt-4">
               <Button asChild size="lg" variant="outline" className="border-black text-black hover:bg-black hover:text-white rounded-none h-14 px-8 text-base font-semibold group transition-all">
@@ -47,10 +47,10 @@ export function TrainingHighlight() {
               <div className="relative z-10 space-y-6">
                 <div className="w-12 h-[2px] bg-accent"></div>
                 <h3 className="text-2xl font-serif text-white font-bold leading-snug">
-                  Bridging the gap between academic theory and commercial execution.
+                  Real brokerage. Real sales. Real growth.
                 </h3>
                 <p className="text-gray-400 font-light">
-                  A program designed to forge the next generation of corporate operators and business leaders.
+                  A high-energy program built for Business Management students hungry to step into a real commercial environment.
                 </p>
               </div>
             </div>

@@ -2,12 +2,12 @@ import { useSeo } from "@/hooks/use-seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { motion } from "framer-motion";
 import { PartnershipCTA } from "@/components/sections/PartnershipCTA";
-import { Settings, TrendingUp, Users, ArrowRight } from "lucide-react";
+import { ShieldCheck, TrendingUp, Cog, ArrowRight } from "lucide-react";
 
 export default function Services() {
   useSeo({
-    title: "Business Solutions & Support | Services",
-    description: "MH LEGAL provides flexible operational support, business development, and staffing solutions built to scale."
+    title: "Insurance Brokerage, Sales & Business Solutions | Services",
+    description: "MH LEGAL is a South African brokerage firm offering insurance brokerage, sales operations, and business solutions designed to grow your enterprise."
   });
 
   return (
@@ -29,7 +29,7 @@ export default function Services() {
             transition={{ delay: 0.1 }}
             className="text-5xl md:text-7xl font-serif font-bold leading-tight"
           >
-            Business Solutions, <br /><span className="text-gray-500 font-light italic">Built To Scale.</span>
+            Brokerage. Sales. <br /><span className="text-gray-500 font-light italic">Business Solutions.</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -37,7 +37,7 @@ export default function Services() {
             transition={{ delay: 0.2 }}
             className="mt-8 text-xl text-gray-400 max-w-2xl font-light leading-relaxed"
           >
-            MH LEGAL provides flexible operational support and business solutions that evolve with your enterprise. We do not impose rigid frameworks; we integrate and adapt to drive efficiency.
+            Three sharply focused service lines, one growth-oriented firm. MH LEGAL delivers insurance brokerage, sales operations, and business solutions that move South African enterprises forward.
           </motion.p>
         </div>
       </section>
@@ -47,11 +47,11 @@ export default function Services() {
         <div className="container mx-auto px-4 md:px-8">
           <div className="max-w-4xl">
             <h2 className="text-3xl md:text-5xl font-serif font-bold leading-tight mb-8">
-              Business Solutions & Support is our <span className="text-accent">core offering.</span>
+              We sell insurance. We grow <span className="text-accent">businesses and leaders.</span>
             </h2>
             <div className="w-full h-[1px] bg-zinc-200 mb-8"></div>
             <p className="text-xl font-medium text-gray-600 leading-relaxed">
-              Every business has its own operational DNA. Our mandate is to analyze your structural needs and deploy targeted solutions — administrative systems, business development support, or trained personnel to reinforce your team. We adapt to the business you are building, not the industry you happen to be in.
+              MH LEGAL is, at its core, a brokerage. But brokerage on its own is not enough. We pair our insurance practice with hands-on sales management and structured business solutions — and back the whole thing with trained, ambitious talent from our In-Service Training program. The result is a firm that protects what you have built, sells with discipline, and develops the people who carry the work forward.
             </p>
           </div>
         </div>
@@ -67,10 +67,10 @@ export default function Services() {
               viewport={{ once: true }}
               className="bg-white p-10 border border-zinc-100 hover:border-accent/50 transition-colors group"
             >
-              <Settings className="w-10 h-10 text-black group-hover:text-accent transition-colors mb-6" />
-              <h3 className="text-2xl font-serif font-bold mb-4">Operational Support</h3>
+              <ShieldCheck className="w-10 h-10 text-black group-hover:text-accent transition-colors mb-6" />
+              <h3 className="text-2xl font-serif font-bold mb-4">Insurance Brokerage</h3>
               <p className="text-gray-600 leading-relaxed">
-                Comprehensive day-to-day operations assistance. From structured workflow systems and SOPs to hands-on administrative oversight, we ensure the engine of your business runs cleanly and predictably.
+                Tailored insurance brokerage for individuals and businesses across South Africa. We assess risk, structure the right cover, and stay engaged through claims and renewals — turning insurance into a strategic asset.
               </p>
             </motion.div>
 
@@ -82,9 +82,9 @@ export default function Services() {
               className="bg-white p-10 border border-zinc-100 hover:border-accent/50 transition-colors group"
             >
               <TrendingUp className="w-10 h-10 text-black group-hover:text-accent transition-colors mb-6" />
-              <h3 className="text-2xl font-serif font-bold mb-4">Business Development</h3>
+              <h3 className="text-2xl font-serif font-bold mb-4">Sales Operations</h3>
               <p className="text-gray-600 leading-relaxed">
-                Strategic systems thinking applied to commercial growth. We help businesses identify new market opportunities, unlock latent revenue streams, and build the pipelines necessary to scale sustainably.
+                High-energy sales management built around discipline and accountability. We design pipelines, run the cadence, coach the team, and drive measurable conversion across every revenue line.
               </p>
             </motion.div>
 
@@ -95,10 +95,10 @@ export default function Services() {
               transition={{ delay: 0.2 }}
               className="bg-white p-10 border border-zinc-100 hover:border-accent/50 transition-colors group"
             >
-              <Users className="w-10 h-10 text-black group-hover:text-accent transition-colors mb-6" />
-              <h3 className="text-2xl font-serif font-bold mb-4">Staffing Solutions</h3>
+              <Cog className="w-10 h-10 text-black group-hover:text-accent transition-colors mb-6" />
+              <h3 className="text-2xl font-serif font-bold mb-4">Business Solutions</h3>
               <p className="text-gray-600 leading-relaxed">
-                Providing capable human capital directly from our rigorous In-Service Training program. We place well-trained, motivated individuals into client teams to execute systems and drive results.
+                Operating procedures, administrative systems, and the structural support that growing businesses need. Practical frameworks that protect performance today and unlock capacity for tomorrow.
               </p>
             </motion.div>
           </div>
@@ -111,14 +111,14 @@ export default function Services() {
         <div className="container mx-auto px-4 md:px-8 relative z-10">
           <div className="mb-16">
             <h2 className="text-3xl md:text-4xl font-serif font-bold mb-6">Our Approach</h2>
-            <p className="text-gray-400 max-w-2xl">A systematic methodology for engaging with and optimizing enterprise operations.</p>
+            <p className="text-gray-400 max-w-2xl">A focused methodology that moves from understanding the business to deploying brokerage, sales, and business solutions that produce results.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {[
-              { step: "01", title: "Discover", desc: "We conduct a thorough audit of your existing processes, personnel, and operational bottlenecks to define the scope of required support." },
-              { step: "02", title: "Design", desc: "We engineer customized solutions—whether deploying new operating procedures, structuring administrative workflows, or strategizing business development frameworks." },
-              { step: "03", title: "Deploy", desc: "We integrate directly into your operations, executing the designed systems alongside your team and providing ongoing adjustments as needed." }
+              { step: "01", title: "Discover", desc: "We get under the hood of the business — risk profile, sales engine, administrative load. We identify where brokerage cover is needed, where sales conversion is leaking, and where structure is missing." },
+              { step: "02", title: "Design", desc: "We build the right mix: insurance brokerage cover, sales management frameworks, and business solutions tuned to the engagement. Practical, sequenced, growth-oriented." },
+              { step: "03", title: "Deploy", desc: "We execute alongside your team. Brokers manage policies, our sales operators run the rhythm, and trained in-service talent reinforces the work day to day." }
             ].map((phase, idx) => (
               <motion.div 
                 key={idx}

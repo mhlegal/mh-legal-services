@@ -21,11 +21,11 @@ export function PartnershipCTA() {
             </motion.div>
             
             <h2 className="text-3xl md:text-5xl font-serif font-bold leading-tight">
-              Ready to Optimize Your Corporate Framework?
+              Ready to Grow Your Business?
             </h2>
             
             <p className="text-gray-400 text-lg max-w-2xl font-light">
-              Engage with MH LEGAL to construct resilient operational systems and develop a workforce equipped to execute them.
+              Speak to MH LEGAL about insurance brokerage, sales operations, and business solutions — and the trained talent we bring with them.
             </p>
             
             <div className="pt-4 flex flex-col sm:flex-row gap-4 w-full justify-center">

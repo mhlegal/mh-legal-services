@@ -7,8 +7,8 @@ import { Linkedin, Mail } from "lucide-react";
 
 export default function About() {
   useSeo({
-    title: "About Us | Philosophy & Vision",
-    description: "MH LEGAL is a multi-disciplinary professional services firm in South Africa. Led by Managing Director Philani Mbooi, we build operational systems and develop the people who run them."
+    title: "About Us | A Brokerage Firm Building Businesses & Careers",
+    description: "MH LEGAL is a South African brokerage firm led by Managing Director Philani Mbooi. We sell insurance, run sales operations, deliver business solutions, and grow the next generation of business leaders."
   });
 
   return (
@@ -30,7 +30,7 @@ export default function About() {
             transition={{ delay: 0.1 }}
             className="text-5xl md:text-7xl font-serif font-bold"
           >
-            A Multi-Disciplinary <br /><span className="text-gray-500 font-light italic">Professional Services Firm.</span>
+            A Brokerage Firm <br /><span className="text-gray-500 font-light italic">Building Businesses & Careers.</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -38,7 +38,7 @@ export default function About() {
             transition={{ delay: 0.2 }}
             className="mt-8 text-xl text-gray-400 max-w-2xl font-light leading-relaxed"
           >
-            MH LEGAL exists at the intersection of structured systems and capable people. We help South African businesses operate with discipline, scale with intent, and develop the talent required to sustain both.
+            MH LEGAL is a South African brokerage firm with a wider mandate. We sell insurance, run high-performing sales operations, and deliver business solutions — and we develop the leaders who will sell, broker, and build for the next generation.
           </motion.p>
         </div>
       </section>
@@ -49,22 +49,22 @@ export default function About() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
             <div className="lg:col-span-5">
               <h2 className="text-3xl md:text-4xl font-serif font-bold mb-8 leading-tight">
-                Systems Thinking Applied to Real Businesses.
+                Brokerage at the Core. Growth Around It.
               </h2>
               <div className="w-full h-[1px] bg-zinc-200 mb-8"></div>
               <p className="text-xl font-medium text-black leading-relaxed">
-                We saw a recurring pattern across South African enterprises: businesses treat operations, compliance, and people as separate obstacles rather than parts of a single, structural foundation.
+                Insurance is what we sell. Growth is what we build. MH LEGAL combines an active brokerage practice with the sales discipline and business solutions a growing firm actually needs.
               </p>
             </div>
             <div className="lg:col-span-7 space-y-8 text-gray-600 leading-relaxed">
               <p>
-                MH LEGAL was founded on a singular premise: a business cannot scale effectively on fragile operational infrastructure. Reactive problem-solving creates noise; proactive systems create capacity. We engineer the latter.
+                MH LEGAL operates as a South African brokerage firm with a deliberate, expanded mandate. At the core sits our insurance brokerage practice — placing the right cover, managing real client relationships, and turning risk into a strategic asset for the people we serve.
               </p>
               <p>
-                Our methodology bridges the gap between strategy and day-to-day execution. By auditing your existing processes, we identify vulnerabilities and implement structured frameworks that protect assets, sharpen compliance, and streamline operations across the business.
+                Around that core, we run sales operations and business solutions for the firm and our partners. Disciplined pipelines, structured processes, and accountable execution are how we convert effort into measurable revenue and how we keep growing businesses moving forward.
               </p>
               <p>
-                However, systems are inert without competent execution. This is why our dual mandate—<strong className="text-black font-semibold">We Build Systems. We Develop People.</strong>—is inseparable. Through rigorous in-service training, we align your workforce with the operating models we put in place, ensuring sustainable implementation long after the engagement.
+                Our dual mandate—<strong className="text-black font-semibold">We Build Systems. We Develop People.</strong>—is inseparable. Every engagement is also a training ground. Business Management students embed inside our brokerage and sales teams, learn the work in motion, and step out as the next generation of business leaders.
               </p>
             </div>
           </div>
@@ -84,17 +84,17 @@ export default function About() {
               {
                 number: "01",
                 title: "Structural Integrity",
-                desc: "We prioritize long-term stability over short-term fixes. Every contract, policy, and protocol is drafted to withstand corporate expansion and market volatility."
+                desc: "We prioritize long-term stability over short-term wins. Brokerage advice, sales processes, and business solutions are built to hold up under real client pressure and market shifts."
               },
               {
                 number: "02",
                 title: "Commercial Pragmatism",
-                desc: "Legal frameworks must facilitate business, not hinder it. We balance rigorous compliance with the need for operational agility and speed to market."
+                desc: "Frameworks must drive growth, not slow it down. We balance professional discipline with the speed and energy a sales-led brokerage firm demands."
               },
               {
                 number: "03",
                 title: "Human Capital Alignment",
-                desc: "We invest in the personnel responsible for executing your systems. Comprehensive training ensures that strategic objectives are realized at every level of the organization."
+                desc: "We invest in the people who carry the work. In-service training inside our sales and brokerage teams ensures the next generation of leaders is being built every day."
               }
             ].map((principle, idx) => (
               <motion.div 
@@ -152,10 +152,10 @@ export default function About() {
                     </h3>
                     <div className="w-12 h-[2px] bg-accent mb-6"></div>
                     <p className="text-gray-400 leading-relaxed mb-4">
-                      Philani Mbooi leads MH LEGAL as Managing Director, setting the strategic direction of the firm and overseeing every major engagement. His focus is straightforward: build operational systems that hold up under pressure, and develop the people who run them day to day.
+                      Philani Mbooi leads MH LEGAL as Managing Director, setting the strategic direction of the firm and staying directly involved across the brokerage practice, sales operations, and the in-service training program. His focus is straightforward: sell with integrity, grow with discipline, and develop the people who carry the work forward.
                     </p>
                     <p className="text-gray-400 leading-relaxed mb-8">
-                      Under his leadership, MH LEGAL has grown into a multi-disciplinary professional services firm trusted by corporates, SMEs, and growth-stage enterprises across South Africa.
+                      Under his leadership, MH LEGAL has grown into a brokerage firm trusted by individuals, SMEs, and growth-stage businesses across South Africa — and a launchpad for the next generation of business leaders.
                     </p>
                     <div className="flex flex-wrap gap-4">
                       <a 

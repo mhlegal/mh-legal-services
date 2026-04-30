@@ -1,7 +1,7 @@
 export const siteConfig = {
   name: "MH LEGAL",
   tagline: "We Build Systems. We Develop People.",
-  description: "A multi-disciplinary professional services firm in South Africa. We provide systems and people to growing businesses — operational support, business solutions, and trained talent that scale with your enterprise.",
+  description: "A South African brokerage firm building businesses and careers. MH LEGAL combines insurance brokerage, sales operations, and business solutions with an in-service training program that develops the next generation of business leaders.",
   url: "https://mhlegal.co.za", // Placeholder
   leadership: {
     managingDirector: {

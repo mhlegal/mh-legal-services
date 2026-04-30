@@ -22,7 +22,7 @@ export function Hero() {
             className="flex items-center gap-4"
           >
             <div className="h-[1px] w-12 bg-accent"></div>
-            <span className="text-accent uppercase tracking-widest text-sm font-semibold">MH Legal & Consulting</span>
+            <span className="text-accent uppercase tracking-widest text-sm font-semibold">Brokerage · Sales · Business Solutions</span>
           </motion.div>
           
           <motion.h1 
@@ -41,7 +41,7 @@ export function Hero() {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="text-lg md:text-xl text-gray-400 max-w-2xl font-light leading-relaxed"
           >
-            A multi-disciplinary professional services firm. We equip growing South African businesses with the operational systems and trained people needed to protect what matters, sharpen execution, and scale with confidence.
+            A South African brokerage firm building businesses and careers. We deliver insurance brokerage, sales operations, and business solutions — and we grow the next generation of business leaders inside every engagement.
           </motion.p>
           
           <motion.div 

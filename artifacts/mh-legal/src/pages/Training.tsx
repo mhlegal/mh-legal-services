@@ -8,8 +8,8 @@ import { siteConfig } from "@/lib/site-config";
 
 export default function Training() {
   useSeo({
-    title: "In-Service Training | Talent Development",
-    description: "We develop talent while building businesses. Join our In-Service Training program to gain real-world business and sales experience."
+    title: "In-Service Training | Sales & Brokerage Experience",
+    description: "Business Management students embed inside MH LEGAL's sales and brokerage teams to gain real commercial experience and grow into the next generation of business leaders."
   });
 
   return (
@@ -32,7 +32,7 @@ export default function Training() {
             transition={{ delay: 0.1 }}
             className="text-5xl md:text-7xl font-serif font-bold leading-tight"
           >
-            We Develop Talent While <br /><span className="text-gray-500 font-light italic">Building Businesses.</span>
+            Build Your Career Inside <br /><span className="text-gray-500 font-light italic">Our Sales & Brokerage Teams.</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -40,7 +40,7 @@ export default function Training() {
             transition={{ delay: 0.2 }}
             className="mt-8 text-xl text-gray-400 max-w-2xl font-light leading-relaxed"
           >
-            A rigorous program designed to embed ambitious students into active corporate environments. We bridge the gap between academic theory and commercial execution.
+            A high-energy In-Service Training program for ambitious Business Management students. Embed directly into our brokerage and sales operations, learn how a real firm grows revenue, and step out as one of the next generation of business leaders.
           </motion.p>
         </div>
       </section>
@@ -55,7 +55,7 @@ export default function Training() {
             </div>
             <div className="lg:col-span-7">
               <p className="text-xl text-gray-600 leading-relaxed">
-                The MH LEGAL In-Service Training program is an immersive initiative that provides real-world business and sales experience for Business Management students and related disciplines. Participants are not sidelined with administrative tasks; they are embedded within a working professional services firm, gaining direct exposure to operational scaling and client engagement.
+                The MH LEGAL In-Service Training program places Business Management students directly inside our sales and brokerage teams. You will not be sidelined with admin — you will work the pipeline, sit in on broker conversations, learn how policies and clients are won, and contribute to a firm that is actively growing. We sell insurance every day, and we develop the leaders who will sell, broker, and build for the next decade.
               </p>
             </div>
           </div>
@@ -81,7 +81,7 @@ export default function Training() {
               </div>
               <ul className="space-y-4">
                 {[
-                  "Currently studying or completed Business Management (or related field)",
+                  "Currently studying Business Management at a recognized institution",
                   "Based in South Africa",
                   "Valid South African ID",
                   "Access to a smartphone and reliable internet"
@@ -110,10 +110,10 @@ export default function Training() {
               <ul className="space-y-4">
                 {[
                   "Strong communication and articulation skills",
-                  "Confidence when speaking with corporate clients",
-                  "Basic understanding of sales pipelines or business operations",
+                  "Confidence when speaking with brokerage and corporate clients",
+                  "Genuine interest in insurance, sales, and business growth",
                   "A highly professional attitude and demeanor",
-                  "Genuine willingness to learn, adapt, and grow"
+                  "Hunger to learn, adapt, and step into leadership"
                 ].map((item, idx) => (
                   <li key={idx} className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-accent shrink-0 mt-0.5" />
@@ -137,10 +137,10 @@ export default function Training() {
               <Briefcase className="w-10 h-10 text-accent mb-6" />
               <h3 className="text-2xl font-serif font-bold mb-6">Role Expectations</h3>
               <div className="space-y-6">
-                <p className="text-gray-400 font-light border-b border-zinc-800 pb-4">Participate actively in sales initiatives and business development activities.</p>
-                <p className="text-gray-400 font-light border-b border-zinc-800 pb-4">Represent MH LEGAL with the highest degree of professionalism.</p>
-                <p className="text-gray-400 font-light border-b border-zinc-800 pb-4">Work alongside the executive team to generate tangible business opportunities.</p>
-                <p className="text-gray-400 font-light">Learn and apply real business operations in a high-stakes environment.</p>
+                <p className="text-gray-400 font-light border-b border-zinc-800 pb-4">Work shoulder-to-shoulder with our sales and brokerage teams on live client activity.</p>
+                <p className="text-gray-400 font-light border-b border-zinc-800 pb-4">Represent MH LEGAL with the highest degree of professionalism in every client interaction.</p>
+                <p className="text-gray-400 font-light border-b border-zinc-800 pb-4">Contribute directly to pipeline activity, client outreach, and revenue generation.</p>
+                <p className="text-gray-400 font-light">Apply business management theory inside a real, high-energy commercial environment.</p>
               </div>
             </div>
 
@@ -151,10 +151,10 @@ export default function Training() {
               </div>
               <h3 className="text-2xl font-serif font-bold mb-6">What We Offer</h3>
               <div className="space-y-6">
-                <p className="text-gray-600 font-medium border-b border-zinc-300 pb-4">Unfiltered real-world business and sales experience.</p>
-                <p className="text-gray-600 font-medium border-b border-zinc-300 pb-4">The opportunity to formally join the MH LEGAL sales team.</p>
-                <p className="text-gray-600 font-medium border-b border-zinc-300 pb-4">Direct exposure to live corporate partnerships and operational ecosystems.</p>
-                <p className="text-gray-600 font-medium">Potential long-term placement within our network based on performance metrics.</p>
+                <p className="text-gray-600 font-medium border-b border-zinc-300 pb-4">Hands-on exposure to insurance brokerage, sales operations, and business solutions.</p>
+                <p className="text-gray-600 font-medium border-b border-zinc-300 pb-4">A clear pathway to formally join the MH LEGAL sales or brokerage team after the program.</p>
+                <p className="text-gray-600 font-medium border-b border-zinc-300 pb-4">Mentorship from active brokers, sales operators, and the firm's leadership.</p>
+                <p className="text-gray-600 font-medium">A high-energy environment where ambition is rewarded with real responsibility.</p>
               </div>
             </div>
 

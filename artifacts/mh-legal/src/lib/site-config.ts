@@ -12,6 +12,9 @@ export const siteConfig = {
   nav: [
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },
+    { name: "Services", path: "/services" },
+    { name: "Training", path: "/training" },
+    { name: "Partnerships", path: "/partnerships" },
     { name: "Contact", path: "/contact" }
   ]
 };

@@ -4,8 +4,8 @@ import { Link } from "wouter";
 
 const services = [
   {
-    title: "Legal Systems",
-    description: "We transition legal compliance from a reactionary defense to a proactive operational system. Contracts, policies, and frameworks designed to scale with your enterprise.",
+    title: "Business Solutions",
+    description: "Structured frameworks, policies, and processes that move from reactive problem-solving to proactive systems. Built to scale with your enterprise, not slow it down.",
     icon: <Scale className="w-8 h-8" />,
     link: "/contact"
   },
@@ -17,13 +17,13 @@ const services = [
   },
   {
     title: "Strategic Partnerships",
-    description: "We do not merely advise; we integrate. By partnering with executive teams, we align legal strategy directly with commercial viability and market expansion goals.",
+    description: "We do not merely advise; we integrate. By partnering with executive teams, we align operational strategy directly with commercial viability and growth objectives.",
     icon: <Handshake className="w-8 h-8" />,
     link: "/contact"
   },
   {
     title: "Operational Efficiency",
-    description: "Identifying friction points within corporate operations and implementing precise, legally-sound processes to enhance productivity and mitigate institutional risk.",
+    description: "Identifying friction points across day-to-day operations and implementing precise, structured processes that enhance productivity and reduce institutional risk.",
     icon: <Cog className="w-8 h-8" />,
     link: "/contact"
   }
@@ -44,7 +44,7 @@ export function WhatWeDo() {
             </h2>
           </div>
           <p className="text-gray-600 max-w-md md:text-right leading-relaxed">
-            We reject the traditional law firm model. MH LEGAL operates as a business consultancy that utilizes legal expertise as an instrument for corporate optimization.
+            MH LEGAL is a multi-disciplinary professional services firm. We blend operational know-how, business strategy, and people development to give growing enterprises a structural advantage.
           </p>
         </div>
 

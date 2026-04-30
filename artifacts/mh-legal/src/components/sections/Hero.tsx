@@ -41,7 +41,7 @@ export function Hero() {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="text-lg md:text-xl text-gray-400 max-w-2xl font-light leading-relaxed"
           >
-            A strategic partner for scalable operations. We combine legal precision with operational systems to help South African businesses protect their assets, empower their workforce, and accelerate growth.
+            A multi-disciplinary professional services firm. We equip growing South African businesses with the operational systems and trained people needed to protect what matters, sharpen execution, and scale with confidence.
           </motion.p>
           
           <motion.div 

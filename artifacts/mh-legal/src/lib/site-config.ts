@@ -1,8 +1,14 @@
 export const siteConfig = {
   name: "MH LEGAL",
   tagline: "We Build Systems. We Develop People.",
-  description: "A South African professional services firm helping businesses scale through legal-operational systems, in-service training programs, and strategic partnerships.",
+  description: "A multi-disciplinary professional services firm in South Africa. We provide systems and people to growing businesses — operational support, business solutions, and trained talent that scale with your enterprise.",
   url: "https://mhlegal.co.za", // Placeholder
+  leadership: {
+    managingDirector: {
+      name: "Philani Mbooi",
+      title: "Managing Director"
+    }
+  },
   contact: {
     email: "info@mhlegal.co.za",
     whatsapp: "+27 73 785 3867",

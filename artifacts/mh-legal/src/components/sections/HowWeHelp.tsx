@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { CheckCircle2, Car, Briefcase, Cog } from "lucide-react";
+import { CheckCircle2, ClipboardList, Briefcase, Cog } from "lucide-react";
 
 export function HowWeHelp() {
   return (
@@ -14,7 +14,7 @@ export function HowWeHelp() {
             How We Help Businesses
           </h2>
           <p className="text-gray-600 text-lg leading-relaxed">
-            We provide concrete operational support to stabilize and scale enterprises. Our interventions are designed to integrate seamlessly with your existing infrastructure.
+            We provide concrete operational support to stabilize and scale growing businesses. Our interventions are designed to integrate seamlessly with your existing infrastructure, regardless of industry.
           </p>
         </div>
 
@@ -25,19 +25,19 @@ export function HowWeHelp() {
             viewport={{ once: true }}
             className="bg-white p-10 border border-zinc-100 hover:border-accent/50 transition-colors group"
           >
-            <Car className="w-10 h-10 text-black group-hover:text-accent transition-colors mb-6" />
-            <h3 className="text-2xl font-bold font-serif mb-4">Dealership Support</h3>
+            <ClipboardList className="w-10 h-10 text-black group-hover:text-accent transition-colors mb-6" />
+            <h3 className="text-2xl font-bold font-serif mb-4">Business Administrative Solutions</h3>
             <p className="text-gray-600 text-sm leading-relaxed mb-6">
-              Specialized operational assistance for the automotive sector. We optimize sales pipelines, manage backend administration, and improve overall desk efficiency.
+              Structured administrative support that removes friction from day-to-day operations. We design clean workflows, document the work, and own the recurring tasks so leadership can focus on growth.
             </p>
             <ul className="space-y-3">
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-accent shrink-0 mt-0.5" />
-                <span className="text-xs text-gray-700">Sales pipeline optimization</span>
+                <span className="text-xs text-gray-700">Process documentation and SOPs</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-accent shrink-0 mt-0.5" />
-                <span className="text-xs text-gray-700">Administrative compliance</span>
+                <span className="text-xs text-gray-700">Pipeline and administrative oversight</span>
               </li>
             </ul>
           </motion.div>

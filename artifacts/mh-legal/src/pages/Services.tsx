@@ -51,7 +51,7 @@ export default function Services() {
             </h2>
             <div className="w-full h-[1px] bg-zinc-200 mb-8"></div>
             <p className="text-xl font-medium text-gray-600 leading-relaxed">
-              We recognize that every business possesses unique operational DNA. Our mandate is to analyze your structural needs and deploy targeted solutions—whether that means managing a dealership desk, optimizing sales pipelines, or providing trained personnel to reinforce your team.
+              Every business has its own operational DNA. Our mandate is to analyze your structural needs and deploy targeted solutions — administrative systems, business development support, or trained personnel to reinforce your team. We adapt to the business you are building, not the industry you happen to be in.
             </p>
           </div>
         </div>
@@ -70,7 +70,7 @@ export default function Services() {
               <Settings className="w-10 h-10 text-black group-hover:text-accent transition-colors mb-6" />
               <h3 className="text-2xl font-serif font-bold mb-4">Operational Support</h3>
               <p className="text-gray-600 leading-relaxed">
-                Comprehensive day-to-day operations assistance. From specialized dealership desk management to implementing robust workflow systems, we ensure the administrative engine of your business runs flawlessly.
+                Comprehensive day-to-day operations assistance. From structured workflow systems and SOPs to hands-on administrative oversight, we ensure the engine of your business runs cleanly and predictably.
               </p>
             </motion.div>
 
@@ -117,7 +117,7 @@ export default function Services() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {[
               { step: "01", title: "Discover", desc: "We conduct a thorough audit of your existing processes, personnel, and operational bottlenecks to define the scope of required support." },
-              { step: "02", title: "Design", desc: "We engineer customized solutions—whether deploying new desk management protocols or strategizing business development frameworks." },
+              { step: "02", title: "Design", desc: "We engineer customized solutions—whether deploying new operating procedures, structuring administrative workflows, or strategizing business development frameworks." },
               { step: "03", title: "Deploy", desc: "We integrate directly into your operations, executing the designed systems alongside your team and providing ongoing adjustments as needed." }
             ].map((phase, idx) => (
               <motion.div 

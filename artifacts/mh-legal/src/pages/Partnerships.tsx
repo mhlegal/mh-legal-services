@@ -57,10 +57,10 @@ export default function Partnerships() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { icon: <Building2 className="w-8 h-8" />, title: "Car Dealerships", desc: "Optimizing desk management, sales pipelines, and administrative workflows." },
-              { icon: <TrendingUp className="w-8 h-8" />, title: "SMEs", desc: "Small to medium businesses requiring structured operational scaling." },
-              { icon: <Cog className="w-8 h-8" />, title: "Growth Companies", desc: "Enterprises focused on improving their operational efficiency and sales." },
-              { icon: <School className="w-8 h-8" />, title: "Training Institutions", desc: "Colleges seeking practical placement environments for their students." }
+              { icon: <Building2 className="w-8 h-8" />, title: "Corporate Clients", desc: "Established organizations looking to tighten administrative systems, governance, and operational discipline." },
+              { icon: <TrendingUp className="w-8 h-8" />, title: "SMEs", desc: "Small to medium businesses requiring structured operational scaling and reliable back-office support." },
+              { icon: <Cog className="w-8 h-8" />, title: "Growth Companies", desc: "Enterprises focused on improving operational efficiency, sales execution, and team capacity." },
+              { icon: <School className="w-8 h-8" />, title: "Training Institutions", desc: "Colleges seeking professional placement environments and structured in-service experiences for their students." }
             ].map((item, idx) => (
               <motion.div 
                 key={idx}
@@ -219,7 +219,7 @@ export default function Partnerships() {
                   </div>
                   <div>
                     <h4 className="font-bold text-lg mb-2">Targeted Operational Assistance</h4>
-                    <p className="text-gray-600">Specialized oversight, including comprehensive dealership desk management.</p>
+                    <p className="text-gray-600">Specialized oversight across administrative workflows, sales pipelines, and recurring back-office functions.</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">

@@ -30,14 +30,21 @@ See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and pa
 
 ### `artifacts/mh-legal` (web — React + Vite, slug `/`)
 
-Marketing website for **MH LEGAL**, a South African brokerage firm.
+Marketing website for **MHLOPHE HOLDINGS LEGAL SERVICES**, a South African corporate insurance brokerage.
 
 - **Tagline**: "We Build Systems. We Develop People."
-- **Positioning**: Brokerage firm with three core service lines — **Insurance Brokerage**, **Sales Operations** (referred to in cards as "Sales Management"), and **Business Solutions**. The firm also runs an **In-Service Training** program that embeds Business Management students inside the sales/brokerage teams. Tone: professional, high-energy, growth-oriented. **Never frame the firm as automotive/dealership-specific or as "desk management".**
-- **In-Service Training requirement**: Applicants must currently be studying **Business Management** at a recognized institution. Training takes place inside live sales/brokerage operations.
-- **Leadership**: Managing Director — Philani Mbooi (defined in `src/lib/site-config.ts` under `leadership.managingDirector`).
-- **Contact**: WhatsApp +27 73 785 3867 (https://wa.me/27737853867), email `info@mhlegal.co.za`.
-- **Pages**: Home, About, Services, Training, Partnerships, Contact (driven by `src/lib/site-config.ts` nav).
+- **Brand name**: MHLOPHE HOLDINGS LEGAL SERVICES (full). Never abbreviate to "MH LEGAL" in copy.
+- **Positioning**: Corporate insurance brokerage with 100+ licensed agents across KwaZulu-Natal. Six service lines: Product Distribution, Market Activation, Sales Representation, Agent Training, In-Service Training, Compliance Management. Partnership with Mthashana TVET College for in-service placements. Tone: professional, high-energy, growth-oriented.
+- **Team**:
+  - Philani Mbooi — MD & Founder
+  - Thulane David Phiri — Head of Operations
+  - Simangaliso Ngobese — Provincial Manager
+  - Field Managers: Bongisipho Mfusi, Khulekani Gumede, Nqobile Miya, Sbongimpilo Miya, Ncamisile Lusenga
+- **Contact emails**: company=mhlopheholdings@gmail.com, provincial=ngobesesimangaliso47@gmail.com, fieldManager=Bongisiphoandile2@gmail.com, headOfField=phirid871@gmail.com
+- **WhatsApp**: +27 73 785 3867
+- **Pages**: Home, About Us, Services, Team, Careers, Contact Us (routes: /, /about, /services, /team, /careers, /contact)
+- **Careers page**: In-Service Training form (Full Names, ID, Address, Phone, Email, Training Letter upload, 150-word bio). On submit → opens mailto to ngobesesimangaliso47@gmail.com with form data prefilled. Also has Youth Employment section (ages 18–30, email CV).
+- **Contact page**: Email selector — user picks from 4 recipients (company, provincial manager, field manager, head of operations) → opens mailto link.
 - **Visual system**: Black / White / Gold (`#C9A961` accent). Playfair Display serif headings, Inter body. Framer-motion reveals. Do not introduce new colors.
 - **Copy rules**: No Lorem Ipsum, no emojis, no placeholder content. All copy is real B2B prose.
-- **Stack note**: Frontend-only React + Vite (wouter, framer-motion, lucide-react, react-hook-form + zod, shadcn/ui). The Contact form currently shows a toast — no email backend wired.
+- **Stack note**: Frontend-only React + Vite (wouter, framer-motion, lucide-react, react-hook-form + zod, shadcn/ui). No backend email — all contact/form actions use mailto links.

@@ -8,8 +8,8 @@ import { SiteLayout } from "@/components/layout/SiteLayout";
 
 export default function Home() {
   useSeo({
-    title: "Corporate Legal & Operations Partner",
-    description: "MH LEGAL builds operational systems and develops people for scalable corporate growth."
+    title: "MHLOPHE HOLDINGS LEGAL SERVICES | Corporate Insurance Brokerage",
+    description: "A South African corporate insurance brokerage with 100+ agents. Product distribution, market activation, sales representation, agent training, in-service training, and compliance management."
   });
 
   return (

@@ -1,10 +1,10 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Upload, CheckCircle, User, CreditCard, MapPin, Mail, AlertCircle, FileText } from "lucide-react";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { apiFetch, apiJson } from "@/lib/api";
+import { Upload, CheckCircle, User, CreditCard, MapPin, Mail, ArrowRight, FileText, AlertCircle } from "lucide-react";
+import { SiteLayout } from "@/components/layout/SiteLayout";
+import { apiJson } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
+import { useSeo } from "@/hooks/use-seo";
 
 const PROVINCES = [
   "Eastern Cape", "Free State", "Gauteng", "KwaZulu-Natal",
@@ -28,6 +28,11 @@ export default function StudentPortal() {
     province: "",
   });
 
+  useSeo({
+    title: "Student HR Portal | MHLOPHE HOLDINGS LEGAL SERVICES",
+    description: "Apply for an In-Service Training placement with MH Legal Services."
+  });
+
   function update(field: string, value: string | boolean) {
     setForm((prev) => ({ ...prev, [field]: value }));
   }
@@ -41,8 +46,7 @@ export default function StudentPortal() {
           body: JSON.stringify({ fileName: file.name, contentType: file.type || "application/octet-stream" }),
         }
       );
-
-      setUploadProgress(30);
+      setUploadProgress(40);
       await fetch(uploadURL, {
         method: "PUT",
         headers: { "Content-Type": file.type || "application/octet-stream" },
@@ -63,19 +67,16 @@ export default function StudentPortal() {
     }
     setLoading(true);
     setUploadProgress(0);
-
     try {
       let trainingLetterPath: string | undefined;
       if (selectedFile) {
         setUploadProgress(10);
         trainingLetterPath = await uploadFile(selectedFile);
       }
-
       await apiJson("/applications", {
         method: "POST",
         body: JSON.stringify({ ...form, trainingLetterPath }),
       });
-
       setSubmitted(true);
     } catch (err: any) {
       toast({
@@ -91,90 +92,112 @@ export default function StudentPortal() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a]">
-        <Navbar />
-        <div className="flex items-center justify-center min-h-[80vh] px-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-center max-w-md"
-          >
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[#C9A961]/10 border border-[#C9A961]/30 mb-6">
-              <CheckCircle className="w-10 h-10 text-[#C9A961]" />
-            </div>
-            <h2 className="font-playfair text-4xl text-white mb-4">Application Received</h2>
-            <p className="text-white/50 mb-2">
-              Thank you, <span className="text-white font-medium">{form.fullNames}</span>.
-            </p>
-            <p className="text-white/40 text-sm mb-8">
-              Your In-Service Training application has been submitted. Our HR team will review it and contact you at <span className="text-white">{form.email}</span> within 3–5 working days.
-            </p>
-            <button
-              onClick={() => { setSubmitted(false); setForm({ fullNames: "", saIdNumber: "", physicalAddress: "", email: "", stipendStatus: false, province: "" }); setSelectedFile(null); }}
-              className="border border-white/10 text-white/60 px-6 py-3 rounded-lg hover:border-[#C9A961]/40 hover:text-[#C9A961] transition-colors"
+      <SiteLayout>
+        <section className="bg-black text-white min-h-[80vh] flex items-center relative overflow-hidden">
+          <div className="absolute left-0 top-0 bottom-0 w-1 bg-accent" />
+          <div className="container mx-auto px-4 md:px-8 relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="max-w-xl"
             >
-              Submit Another Application
-            </button>
-          </motion.div>
-        </div>
-        <Footer />
-      </div>
+              <div className="flex items-center gap-4 mb-8">
+                <CheckCircle className="w-10 h-10 text-accent" />
+                <div className="h-[1px] flex-1 bg-zinc-800" />
+              </div>
+              <h2 className="text-5xl font-serif font-bold mb-6 leading-tight">
+                Application <br />
+                <span className="text-gray-500 font-light italic">Received.</span>
+              </h2>
+              <p className="text-gray-400 text-lg font-light leading-relaxed mb-2">
+                Thank you, <span className="text-white font-semibold">{form.fullNames}</span>.
+              </p>
+              <p className="text-gray-500 leading-relaxed mb-10">
+                Your In-Service Training application has been submitted. Our HR team will review it and contact you at <span className="text-white">{form.email}</span> within 3–5 working days.
+              </p>
+              <button
+                onClick={() => {
+                  setSubmitted(false);
+                  setForm({ fullNames: "", saIdNumber: "", physicalAddress: "", email: "", stipendStatus: false, province: "" });
+                  setSelectedFile(null);
+                }}
+                className="flex items-center gap-3 border border-white/20 text-white px-8 py-3 hover:border-accent hover:text-accent transition-colors text-sm uppercase tracking-wider font-semibold"
+              >
+                Submit Another Application
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </motion.div>
+          </div>
+        </section>
+      </SiteLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
-      <Navbar />
-
-      <section className="pt-32 pb-20 px-6">
-        <div className="max-w-3xl mx-auto">
+    <SiteLayout>
+      {/* Hero */}
+      <section className="bg-black text-white pt-32 pb-20 md:pt-48 md:pb-32 relative overflow-hidden">
+        <div className="absolute left-0 top-0 bottom-0 w-1 bg-accent" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent opacity-5 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
+        <div className="container mx-auto px-4 md:px-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-12"
+            className="flex items-center gap-4 mb-8"
           >
-            <div className="flex items-center gap-3 mb-4">
-              <div className="h-px w-12 bg-[#C9A961]" />
-              <span className="text-[#C9A961] text-xs font-medium uppercase tracking-[0.2em]">HR Portal</span>
-            </div>
-            <h1 className="font-playfair text-5xl text-white mb-4">
-              Student <span className="text-[#C9A961]">Application</span>
-            </h1>
-            <p className="text-white/50">
-              Apply for an In-Service Training placement with MH Legal Services. Complete all fields and upload your training letter to submit your application.
-            </p>
+            <div className="h-[1px] w-12 bg-accent" />
+            <span className="text-accent uppercase tracking-widest text-sm font-semibold">HR Portal</span>
           </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-[#111] border border-white/8 rounded-2xl p-8"
+            className="text-5xl md:text-7xl font-serif font-bold leading-tight"
           >
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
+            Student <br />
+            <span className="text-gray-500 font-light italic">Application.</span>
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mt-8 text-xl text-gray-400 max-w-2xl font-light leading-relaxed"
+          >
+            Apply for an In-Service Training placement with MH Legal Services. Complete all fields and upload your training letter to submit your application.
+          </motion.p>
+        </div>
+      </section>
+
+      {/* Form */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-4 md:px-8">
+          <div className="max-w-3xl mx-auto">
+            <form onSubmit={handleSubmit}>
+              <div className="grid md:grid-cols-2 gap-8 mb-8">
+                {/* Full Names */}
                 <div>
-                  <label className="block text-xs font-medium text-white/40 uppercase tracking-wider mb-2">
-                    Full Names <span className="text-red-400">*</span>
+                  <label className="block text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-3">
+                    Full Names <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-300" />
                     <input
                       required
                       value={form.fullNames}
                       onChange={(e) => update("fullNames", e.target.value)}
                       placeholder="As per ID document"
-                      className="w-full bg-white/5 border border-white/10 rounded-lg py-3 pl-10 pr-4 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#C9A961]/50 transition-colors"
+                      className="w-full border border-zinc-200 py-3 pl-10 pr-4 text-black text-sm placeholder-zinc-300 focus:outline-none focus:border-black transition-colors"
                     />
                   </div>
                 </div>
 
+                {/* SA ID */}
                 <div>
-                  <label className="block text-xs font-medium text-white/40 uppercase tracking-wider mb-2">
-                    SA ID Number <span className="text-red-400">*</span>
+                  <label className="block text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-3">
+                    SA ID Number <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
-                    <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+                    <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-300" />
                     <input
                       required
                       value={form.saIdNumber}
@@ -182,69 +205,73 @@ export default function StudentPortal() {
                       placeholder="13-digit ID number"
                       maxLength={13}
                       pattern="\d{13}"
-                      className="w-full bg-white/5 border border-white/10 rounded-lg py-3 pl-10 pr-4 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#C9A961]/50 transition-colors font-mono"
+                      className="w-full border border-zinc-200 py-3 pl-10 pr-4 text-black text-sm placeholder-zinc-300 focus:outline-none focus:border-black transition-colors font-mono"
                     />
                   </div>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-medium text-white/40 uppercase tracking-wider mb-2">
-                  Physical Address <span className="text-red-400">*</span>
+              {/* Address */}
+              <div className="mb-8">
+                <label className="block text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-3">
+                  Physical Address <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <MapPin className="absolute left-3 top-3.5 w-4 h-4 text-white/20" />
+                  <MapPin className="absolute left-3 top-3.5 w-4 h-4 text-zinc-300" />
                   <textarea
                     required
                     value={form.physicalAddress}
                     onChange={(e) => update("physicalAddress", e.target.value)}
                     placeholder="Street address, suburb, city, postal code"
                     rows={3}
-                    className="w-full bg-white/5 border border-white/10 rounded-lg py-3 pl-10 pr-4 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#C9A961]/50 transition-colors resize-none"
+                    className="w-full border border-zinc-200 py-3 pl-10 pr-4 text-black text-sm placeholder-zinc-300 focus:outline-none focus:border-black transition-colors resize-none"
                   />
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid md:grid-cols-2 gap-8 mb-8">
+                {/* Email */}
                 <div>
-                  <label className="block text-xs font-medium text-white/40 uppercase tracking-wider mb-2">
-                    Email Address <span className="text-red-400">*</span>
+                  <label className="block text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-3">
+                    Email Address <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-300" />
                     <input
                       required
                       type="email"
                       value={form.email}
                       onChange={(e) => update("email", e.target.value)}
                       placeholder="your@email.com"
-                      className="w-full bg-white/5 border border-white/10 rounded-lg py-3 pl-10 pr-4 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#C9A961]/50 transition-colors"
+                      className="w-full border border-zinc-200 py-3 pl-10 pr-4 text-black text-sm placeholder-zinc-300 focus:outline-none focus:border-black transition-colors"
                     />
                   </div>
                 </div>
 
+                {/* Province */}
                 <div>
-                  <label className="block text-xs font-medium text-white/40 uppercase tracking-wider mb-2">
-                    Province <span className="text-red-400">*</span>
+                  <label className="block text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-3">
+                    Province <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={form.province}
                     onChange={(e) => update("province", e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 rounded-lg py-3 px-4 text-white text-sm focus:outline-none focus:border-[#C9A961]/50 transition-colors appearance-none"
+                    className="w-full border border-zinc-200 py-3 px-4 text-black text-sm focus:outline-none focus:border-black transition-colors appearance-none bg-white"
                   >
-                    <option value="" className="bg-[#111]">Select province</option>
+                    <option value="">Select province</option>
                     {PROVINCES.map((p) => (
-                      <option key={p} value={p} className="bg-[#111]">{p}</option>
+                      <option key={p} value={p}>{p}</option>
                     ))}
                   </select>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-medium text-white/40 uppercase tracking-wider mb-3">
-                  Stipend Status <span className="text-red-400">*</span>
+              {/* Stipend */}
+              <div className="mb-8">
+                <label className="block text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-3">
+                  Stipend Status <span className="text-red-500">*</span>
                 </label>
-                <div className="flex gap-4">
+                <div className="grid grid-cols-2 gap-4">
                   {[
                     { label: "Yes — I require a stipend", value: true },
                     { label: "No — No stipend required", value: false },
@@ -253,10 +280,10 @@ export default function StudentPortal() {
                       key={String(value)}
                       type="button"
                       onClick={() => update("stipendStatus", value)}
-                      className={`flex-1 py-3 px-4 rounded-lg border text-sm font-medium transition-all ${
+                      className={`py-3 px-4 border text-sm font-semibold transition-all uppercase tracking-wider ${
                         form.stipendStatus === value
-                          ? "bg-[#C9A961]/10 border-[#C9A961] text-[#C9A961]"
-                          : "bg-white/5 border-white/10 text-white/40 hover:border-white/20"
+                          ? "bg-accent border-accent text-black"
+                          : "border-zinc-200 text-zinc-400 hover:border-zinc-400"
                       }`}
                     >
                       {label}
@@ -265,31 +292,32 @@ export default function StudentPortal() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-medium text-white/40 uppercase tracking-wider mb-2">
+              {/* File Upload */}
+              <div className="mb-8">
+                <label className="block text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-3">
                   In-Service Training Letter
                 </label>
                 <div
                   onClick={() => fileRef.current?.click()}
-                  className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
+                  className={`border-2 border-dashed p-10 text-center cursor-pointer transition-all ${
                     selectedFile
-                      ? "border-[#C9A961]/50 bg-[#C9A961]/5"
-                      : "border-white/10 hover:border-white/20"
+                      ? "border-accent bg-accent/5"
+                      : "border-zinc-200 hover:border-zinc-400"
                   }`}
                 >
                   {selectedFile ? (
-                    <div className="flex items-center justify-center gap-3">
-                      <FileText className="w-6 h-6 text-[#C9A961]" />
+                    <div className="flex items-center justify-center gap-4">
+                      <FileText className="w-8 h-8 text-accent" />
                       <div className="text-left">
-                        <p className="text-white text-sm font-medium">{selectedFile.name}</p>
-                        <p className="text-white/30 text-xs">{(selectedFile.size / 1024).toFixed(1)} KB</p>
+                        <p className="text-black font-semibold">{selectedFile.name}</p>
+                        <p className="text-zinc-400 text-sm">{(selectedFile.size / 1024).toFixed(1)} KB</p>
                       </div>
                     </div>
                   ) : (
                     <>
-                      <Upload className="w-8 h-8 text-white/20 mx-auto mb-3" />
-                      <p className="text-white/50 text-sm">Click to upload your training letter</p>
-                      <p className="text-white/25 text-xs mt-1">PDF, DOC, DOCX or image — max 20MB</p>
+                      <Upload className="w-8 h-8 text-zinc-300 mx-auto mb-3" />
+                      <p className="text-zinc-500 text-sm font-semibold">Click to upload your training letter</p>
+                      <p className="text-zinc-300 text-xs mt-1">PDF, DOC, DOCX or image — max 20MB</p>
                     </>
                   )}
                   <input
@@ -302,24 +330,23 @@ export default function StudentPortal() {
                 </div>
               </div>
 
+              {/* Upload progress */}
               {uploadProgress > 0 && uploadProgress < 100 && (
-                <div className="space-y-1">
-                  <div className="flex justify-between text-xs text-white/40">
+                <div className="mb-6">
+                  <div className="flex justify-between text-xs text-zinc-400 mb-1">
                     <span>Uploading file...</span>
                     <span>{uploadProgress}%</span>
                   </div>
-                  <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-[#C9A961] transition-all duration-300"
-                      style={{ width: `${uploadProgress}%` }}
-                    />
+                  <div className="h-1 bg-zinc-100 overflow-hidden">
+                    <div className="h-full bg-accent transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
                   </div>
                 </div>
               )}
 
-              <div className="flex items-start gap-3 bg-amber-500/5 border border-amber-500/15 rounded-xl p-4">
-                <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
-                <p className="text-white/50 text-xs leading-relaxed">
+              {/* POPIA notice */}
+              <div className="flex items-start gap-3 border border-zinc-100 p-5 mb-8 bg-zinc-50">
+                <AlertCircle className="w-4 h-4 text-accent shrink-0 mt-0.5" />
+                <p className="text-zinc-500 text-xs leading-relaxed">
                   By submitting this form, you consent to MH Legal Services processing your personal information in accordance with POPIA for the purposes of evaluating your In-Service Training application.
                 </p>
               </div>
@@ -327,16 +354,19 @@ export default function StudentPortal() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#C9A961] text-black font-semibold py-4 rounded-xl hover:bg-[#b8973a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-base"
+                className="flex items-center justify-center gap-3 w-full bg-accent text-black font-bold py-4 hover:bg-black hover:text-white transition-colors disabled:opacity-50 text-sm uppercase tracking-wider"
               >
-                {loading ? "Submitting Application..." : "Submit Application"}
+                {loading ? "Submitting..." : (
+                  <>
+                    Submit Application
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
               </button>
             </form>
-          </motion.div>
+          </div>
         </div>
       </section>
-
-      <Footer />
-    </div>
+    </SiteLayout>
   );
 }

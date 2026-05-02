@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Phone, Shield, Gavel, FileText, CreditCard, Scale, ChevronRight, X, User, Mail, PhoneCall } from "lucide-react";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
+import { Phone, Shield, Gavel, FileText, CreditCard, Scale, ArrowRight, X, User, Mail, PhoneCall } from "lucide-react";
+import { SiteLayout } from "@/components/layout/SiteLayout";
 import { apiJson } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
+import { useSeo } from "@/hooks/use-seo";
 
 const DURBAN_HQ = "+27310027797";
 const NATIONAL = "0870060205";
@@ -28,7 +28,6 @@ const SERVICES = [
       "Family members included",
       "Nationwide attorney network",
     ],
-    color: "#C9A961",
   },
   {
     id: "ccma",
@@ -46,7 +45,6 @@ const SERVICES = [
       "Wage and benefit claims",
       "Labour Court representation",
     ],
-    color: "#C9A961",
   },
   {
     id: "contracts",
@@ -64,7 +62,6 @@ const SERVICES = [
       "Independent contractor agreements",
       "Contract review & redlining",
     ],
-    color: "#C9A961",
   },
   {
     id: "debt",
@@ -82,7 +79,6 @@ const SERVICES = [
       "Garnishee orders",
       "Emolument attachment orders",
     ],
-    color: "#C9A961",
   },
   {
     id: "civil-rights",
@@ -100,7 +96,6 @@ const SERVICES = [
       "Interdicts & urgent relief",
       "Human rights tribunal cases",
     ],
-    color: "#C9A961",
   },
 ];
 
@@ -122,7 +117,7 @@ function LeadModal({ service, onClose }: LeadModalProps) {
         method: "POST",
         body: JSON.stringify({ ...form, service: service.title }),
       });
-      toast({ title: "Enquiry sent!", description: "Our team will contact you within 24 hours." });
+      toast({ title: "Enquiry sent", description: "Our team will contact you within 24 hours." });
       onClose();
     } catch {
       toast({ title: "Failed to send enquiry", description: "Please call us directly.", variant: "destructive" });
@@ -132,80 +127,87 @@ function LeadModal({ service, onClose }: LeadModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="bg-[#111] border border-white/10 rounded-2xl w-full max-w-lg"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white w-full max-w-lg border border-zinc-200"
       >
-        <div className="flex items-center justify-between p-6 border-b border-white/10">
+        {/* Modal header */}
+        <div className="flex items-start justify-between p-8 border-b border-zinc-100">
           <div>
-            <h3 className="font-playfair text-xl text-white">{service.title}</h3>
-            <p className="text-white/40 text-sm mt-0.5">Request a callback or consultation</p>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="h-[2px] w-8 bg-accent" />
+              <span className="text-accent uppercase tracking-widest text-xs font-semibold">{service.badge}</span>
+            </div>
+            <h3 className="font-serif text-2xl font-bold text-black">{service.title}</h3>
           </div>
-          <button onClick={onClose} className="text-white/30 hover:text-white transition-colors">
+          <button onClick={onClose} className="text-zinc-300 hover:text-black transition-colors mt-1">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="p-6 border-b border-white/5">
-          <div className="flex gap-3">
+        {/* Direct call */}
+        <div className="p-8 border-b border-zinc-100">
+          <p className="text-xs uppercase tracking-widest text-zinc-400 font-semibold mb-4">Call Us Directly</p>
+          <div className="grid grid-cols-2 gap-3">
             <a
               href={`tel:${DURBAN_HQ}`}
-              className="flex-1 flex items-center gap-2 bg-[#C9A961]/10 border border-[#C9A961]/20 rounded-lg px-4 py-3 hover:bg-[#C9A961]/20 transition-colors"
+              className="flex items-center gap-3 border border-zinc-200 px-4 py-3 hover:border-accent hover:bg-accent/5 transition-all group"
             >
-              <PhoneCall className="w-4 h-4 text-[#C9A961]" />
+              <PhoneCall className="w-4 h-4 text-accent shrink-0" />
               <div>
-                <p className="text-[10px] text-white/40 uppercase tracking-wider">Durban HQ</p>
-                <p className="text-white text-sm font-medium">{DURBAN_DISPLAY}</p>
+                <p className="text-[10px] text-zinc-400 uppercase tracking-wider">Durban HQ</p>
+                <p className="text-black text-sm font-semibold">{DURBAN_DISPLAY}</p>
               </div>
             </a>
             <a
               href={`tel:${NATIONAL}`}
-              className="flex-1 flex items-center gap-2 bg-[#C9A961]/10 border border-[#C9A961]/20 rounded-lg px-4 py-3 hover:bg-[#C9A961]/20 transition-colors"
+              className="flex items-center gap-3 border border-zinc-200 px-4 py-3 hover:border-accent hover:bg-accent/5 transition-all group"
             >
-              <PhoneCall className="w-4 h-4 text-[#C9A961]" />
+              <PhoneCall className="w-4 h-4 text-accent shrink-0" />
               <div>
-                <p className="text-[10px] text-white/40 uppercase tracking-wider">National</p>
-                <p className="text-white text-sm font-medium">{NATIONAL_DISPLAY}</p>
+                <p className="text-[10px] text-zinc-400 uppercase tracking-wider">National</p>
+                <p className="text-black text-sm font-semibold">{NATIONAL_DISPLAY}</p>
               </div>
             </a>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <p className="text-white/40 text-xs uppercase tracking-wider">Or send an enquiry</p>
-          <div className="grid grid-cols-2 gap-4">
+        {/* Lead form */}
+        <form onSubmit={handleSubmit} className="p-8 space-y-4">
+          <p className="text-xs uppercase tracking-widest text-zinc-400 font-semibold">Or Send an Enquiry</p>
+          <div className="grid grid-cols-2 gap-3">
             <div className="relative">
-              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-300" />
               <input
                 required
                 placeholder="Full name"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 pl-9 pr-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#C9A961]/50"
+                className="w-full border border-zinc-200 py-2.5 pl-9 pr-3 text-black text-sm placeholder-zinc-300 focus:outline-none focus:border-black transition-colors"
               />
             </div>
             <div className="relative">
-              <PhoneCall className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+              <PhoneCall className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-300" />
               <input
                 required
                 placeholder="Phone number"
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 pl-9 pr-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#C9A961]/50"
+                className="w-full border border-zinc-200 py-2.5 pl-9 pr-3 text-black text-sm placeholder-zinc-300 focus:outline-none focus:border-black transition-colors"
               />
             </div>
           </div>
           <div className="relative">
-            <Mail className="absolute left-3 top-3.5 w-4 h-4 text-white/20" />
+            <Mail className="absolute left-3 top-3 w-4 h-4 text-zinc-300" />
             <input
               required
               type="email"
               placeholder="Email address"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 pl-9 pr-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#C9A961]/50"
+              className="w-full border border-zinc-200 py-2.5 pl-9 pr-3 text-black text-sm placeholder-zinc-300 focus:outline-none focus:border-black transition-colors"
             />
           </div>
           <textarea
@@ -213,12 +215,12 @@ function LeadModal({ service, onClose }: LeadModalProps) {
             value={form.message}
             onChange={(e) => setForm({ ...form, message: e.target.value })}
             rows={3}
-            className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#C9A961]/50 resize-none"
+            className="w-full border border-zinc-200 py-2.5 px-3 text-black text-sm placeholder-zinc-300 focus:outline-none focus:border-black transition-colors resize-none"
           />
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#C9A961] text-black font-semibold py-3 rounded-lg hover:bg-[#b8973a] transition-colors disabled:opacity-50"
+            className="w-full bg-accent text-black font-bold py-3 hover:bg-black hover:text-white transition-colors disabled:opacity-50 text-sm uppercase tracking-wider"
           >
             {loading ? "Sending..." : "Send Enquiry"}
           </button>
@@ -231,93 +233,116 @@ function LeadModal({ service, onClose }: LeadModalProps) {
 export default function LegalServices() {
   const [selectedService, setSelectedService] = useState<(typeof SERVICES)[0] | null>(null);
 
-  return (
-    <div className="min-h-screen bg-[#0a0a0a]">
-      <Navbar />
+  useSeo({
+    title: "Legal Services | MH Legal Services Pty Ltd",
+    description: "Comprehensive legal protection — R200k Legal Cover, CCMA, Contract Drafting, Debt Collection, Civil Rights."
+  });
 
-      <section className="pt-32 pb-20 px-6">
-        <div className="max-w-6xl mx-auto">
+  return (
+    <SiteLayout>
+      {/* Hero */}
+      <section className="bg-black text-white pt-32 pb-20 md:pt-48 md:pb-32 relative overflow-hidden">
+        <div className="absolute left-0 top-0 bottom-0 w-1 bg-accent" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent opacity-5 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
+        <div className="container mx-auto px-4 md:px-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-16"
+            className="flex items-center gap-4 mb-8"
           >
-            <div className="flex items-center gap-3 mb-4">
-              <div className="h-px w-12 bg-[#C9A961]" />
-              <span className="text-[#C9A961] text-xs font-medium uppercase tracking-[0.2em]">Legal Services</span>
-            </div>
-            <h1 className="font-playfair text-5xl text-white mb-6">
-              Comprehensive Legal<br />
-              <span className="text-[#C9A961]">Protection</span>
-            </h1>
-            <p className="text-white/50 text-lg max-w-2xl">
-              MH Legal Services Pty Ltd provides affordable, professional legal solutions for individuals and businesses across South Africa.
-            </p>
-            <div className="flex gap-4 mt-8">
-              <a
-                href={`tel:${DURBAN_HQ}`}
-                className="flex items-center gap-2 bg-[#C9A961] text-black px-6 py-3 rounded-lg font-semibold hover:bg-[#b8973a] transition-colors"
-              >
-                <Phone className="w-4 h-4" />
-                {DURBAN_DISPLAY}
-              </a>
-              <a
-                href={`tel:${NATIONAL}`}
-                className="flex items-center gap-2 border border-[#C9A961]/40 text-[#C9A961] px-6 py-3 rounded-lg font-semibold hover:bg-[#C9A961]/10 transition-colors"
-              >
-                <Phone className="w-4 h-4" />
-                {NATIONAL_DISPLAY}
-              </a>
-            </div>
+            <div className="h-[1px] w-12 bg-accent" />
+            <span className="text-accent uppercase tracking-widest text-sm font-semibold">Legal Services</span>
           </motion.div>
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-5xl md:text-7xl font-serif font-bold leading-tight"
+          >
+            Comprehensive Legal <br />
+            <span className="text-gray-500 font-light italic">Protection.</span>
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mt-8 text-xl text-gray-400 max-w-2xl font-light leading-relaxed"
+          >
+            MH Legal Services Pty Ltd delivers affordable, professional legal solutions for individuals and businesses across South Africa.
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="flex flex-wrap gap-4 mt-10"
+          >
+            <a
+              href={`tel:${DURBAN_HQ}`}
+              className="flex items-center gap-3 bg-accent text-black px-6 py-3 font-bold hover:bg-white transition-colors text-sm uppercase tracking-wider"
+            >
+              <Phone className="w-4 h-4" />
+              {DURBAN_DISPLAY} — Durban HQ
+            </a>
+            <a
+              href={`tel:${NATIONAL}`}
+              className="flex items-center gap-3 border border-white/20 text-white px-6 py-3 font-semibold hover:border-accent hover:text-accent transition-colors text-sm uppercase tracking-wider"
+            >
+              <Phone className="w-4 h-4" />
+              {NATIONAL_DISPLAY} — National
+            </a>
+          </motion.div>
+        </div>
+      </section>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {SERVICES.map((service, i) => {
+      {/* Services Grid */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-4 md:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {SERVICES.map((service, idx) => {
               const Icon = service.icon;
               return (
                 <motion.div
                   key={service.id}
                   initial={{ opacity: 0, y: 24 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.08 }}
-                  className="group bg-[#111] border border-white/8 rounded-2xl p-6 hover:border-[#C9A961]/30 transition-all duration-300 flex flex-col"
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-80px" }}
+                  transition={{ duration: 0.5, delay: (idx % 2) * 0.1 }}
+                  className="group border border-zinc-100 p-10 hover:border-accent/50 hover:shadow-lg transition-all duration-300 flex flex-col"
                 >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-[#C9A961]/10 flex items-center justify-center">
-                      <Icon className="w-6 h-6 text-[#C9A961]" />
+                  <div className="flex items-start justify-between mb-6">
+                    <div className="text-black group-hover:text-accent transition-colors">
+                      <Icon className="w-10 h-10" />
                     </div>
-                    <span className="text-[10px] font-medium uppercase tracking-wider text-[#C9A961] bg-[#C9A961]/10 px-2.5 py-1 rounded-full border border-[#C9A961]/20">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-accent border border-accent/30 px-2.5 py-1">
                       {service.badge}
                     </span>
                   </div>
-
-                  <h3 className="font-playfair text-xl text-white mb-2">{service.title}</h3>
-                  <p className="text-[#C9A961] text-sm mb-3">{service.tagline}</p>
-                  <p className="text-white/40 text-sm leading-relaxed mb-5 flex-1">{service.description}</p>
-
-                  <ul className="space-y-2 mb-6">
+                  <div className="w-10 h-[2px] bg-zinc-200 group-hover:bg-accent transition-colors mb-6" />
+                  <h3 className="text-2xl font-serif font-bold text-black mb-2">{service.title}</h3>
+                  <p className="text-accent text-sm font-semibold mb-4">{service.tagline}</p>
+                  <p className="text-gray-600 leading-relaxed mb-8 flex-1">{service.description}</p>
+                  <ul className="space-y-3 mb-8">
                     {service.features.map((f) => (
-                      <li key={f} className="flex items-center gap-2 text-sm text-white/60">
-                        <div className="w-1 h-1 rounded-full bg-[#C9A961] flex-shrink-0" />
+                      <li key={f} className="flex items-start gap-3 text-sm text-gray-700">
+                        <ArrowRight size={14} className="text-accent shrink-0 mt-0.5" />
                         {f}
                       </li>
                     ))}
                   </ul>
-
-                  <div className="grid grid-cols-2 gap-2 mt-auto">
+                  <div className="grid grid-cols-2 gap-3 mt-auto">
                     <a
                       href={`tel:${DURBAN_HQ}`}
-                      className="flex items-center justify-center gap-1.5 bg-[#C9A961] text-black text-xs font-semibold py-2.5 rounded-lg hover:bg-[#b8973a] transition-colors"
+                      className="flex items-center justify-center gap-2 bg-accent text-black text-xs font-bold py-3 hover:bg-black hover:text-white transition-colors uppercase tracking-wider"
                     >
                       <Phone className="w-3.5 h-3.5" />
-                      Durban HQ
+                      Call Durban HQ
                     </a>
                     <button
                       onClick={() => setSelectedService(service)}
-                      className="flex items-center justify-center gap-1.5 border border-white/10 text-white/60 text-xs font-medium py-2.5 rounded-lg hover:border-[#C9A961]/40 hover:text-[#C9A961] transition-colors"
+                      className="flex items-center justify-center gap-2 border border-zinc-200 text-black text-xs font-semibold py-3 hover:border-accent hover:text-accent transition-colors uppercase tracking-wider"
                     >
                       Enquire
-                      <ChevronRight className="w-3.5 h-3.5" />
+                      <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </motion.div>
@@ -327,40 +352,43 @@ export default function LegalServices() {
         </div>
       </section>
 
-      <section className="py-16 px-6 border-t border-white/5">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="font-playfair text-3xl text-white mb-4">Need Immediate Assistance?</h2>
-          <p className="text-white/40 mb-8">Our legal team is available during business hours. Call directly for urgent matters.</p>
+      {/* CTA */}
+      <section className="py-24 bg-black text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent opacity-5 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
+        <div className="container mx-auto px-4 md:px-8 relative z-10 text-center">
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <div className="h-[1px] w-12 bg-accent" />
+            <span className="text-accent uppercase tracking-widest text-sm font-semibold">Need Urgent Help?</span>
+            <div className="h-[1px] w-12 bg-accent" />
+          </div>
+          <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">
+            Our Legal Team Is Ready.
+          </h2>
+          <p className="text-gray-400 max-w-xl mx-auto mb-10 font-light">
+            Available during business hours for consultations, urgent matters, and immediate legal advice.
+          </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href={`tel:${DURBAN_HQ}`}
-              className="flex items-center justify-center gap-3 bg-[#C9A961] text-black px-8 py-4 rounded-xl font-semibold text-lg hover:bg-[#b8973a] transition-colors"
+              className="flex items-center justify-center gap-3 bg-accent text-black px-10 py-4 font-bold hover:bg-white transition-colors text-sm uppercase tracking-wider"
             >
               <Phone className="w-5 h-5" />
-              <div className="text-left">
-                <div className="text-xs opacity-70 font-normal">Durban HQ</div>
-                <div>{DURBAN_DISPLAY}</div>
-              </div>
+              {DURBAN_DISPLAY} — Durban HQ
             </a>
             <a
               href={`tel:${NATIONAL}`}
-              className="flex items-center justify-center gap-3 border-2 border-[#C9A961] text-[#C9A961] px-8 py-4 rounded-xl font-semibold text-lg hover:bg-[#C9A961]/10 transition-colors"
+              className="flex items-center justify-center gap-3 border border-white/20 text-white px-10 py-4 font-semibold hover:border-accent hover:text-accent transition-colors text-sm uppercase tracking-wider"
             >
               <Phone className="w-5 h-5" />
-              <div className="text-left">
-                <div className="text-xs opacity-70 font-normal">National Line</div>
-                <div>{NATIONAL_DISPLAY}</div>
-              </div>
+              {NATIONAL_DISPLAY} — National
             </a>
           </div>
         </div>
       </section>
 
-      <Footer />
-
       {selectedService && (
         <LeadModal service={selectedService} onClose={() => setSelectedService(null)} />
       )}
-    </div>
+    </SiteLayout>
   );
 }

@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { motion } from "framer-motion";
 import {
-  LogOut, Users, Filter, Download, Shield, RefreshCw,
-  CheckCircle, XCircle, MapPin, FileText, ChevronDown,
-  Eye, AlertTriangle
+  LogOut, Users, Filter, Download, Shield,
+  RefreshCw, CheckCircle, XCircle, MapPin,
+  FileText, ChevronDown, Eye, AlertTriangle, ArrowRight
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { apiJson } from "@/lib/api";
@@ -26,16 +26,18 @@ interface Application {
   created_at: string;
 }
 
-function StatCard({ label, value, icon: Icon, color = "text-[#C9A961]" }: {
-  label: string; value: number | string; icon: any; color?: string;
+function StatCard({ label, value, icon: Icon, accent = false }: {
+  label: string; value: number | string; icon: any; accent?: boolean;
 }) {
   return (
-    <div className="bg-[#111] border border-white/8 rounded-xl p-5">
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-white/40 text-xs uppercase tracking-wider">{label}</span>
-        <Icon className={`w-4 h-4 ${color}`} />
+    <div className={`border p-8 ${accent ? "bg-accent border-accent" : "bg-zinc-950 border-zinc-900"}`}>
+      <div className="flex items-center justify-between mb-4">
+        <span className={`text-xs font-semibold uppercase tracking-widest ${accent ? "text-black/60" : "text-zinc-600"}`}>
+          {label}
+        </span>
+        <Icon className={`w-4 h-4 ${accent ? "text-black/50" : "text-zinc-700"}`} />
       </div>
-      <p className={`text-3xl font-bold ${color}`}>{value}</p>
+      <p className={`text-4xl font-serif font-bold ${accent ? "text-black" : "text-white"}`}>{value}</p>
     </div>
   );
 }
@@ -64,9 +66,7 @@ export default function AdminDashboard() {
     }
   }, [provinceFilter, stipendFilter]);
 
-  useEffect(() => {
-    fetchApplications();
-  }, [fetchApplications]);
+  useEffect(() => { fetchApplications(); }, [fetchApplications]);
 
   async function handleLogout() {
     await logout();
@@ -101,118 +101,145 @@ export default function AdminDashboard() {
   }, {});
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-black text-white">
       {/* Header */}
-      <header className="border-b border-white/8 bg-[#0a0a0a]/95 backdrop-blur-md sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-8 h-8 rounded-lg bg-[#C9A961]/10 flex items-center justify-center">
-              <Shield className="w-4 h-4 text-[#C9A961]" />
-            </div>
-            <div>
-              <h1 className="font-playfair text-white text-lg leading-none">Manager Dashboard</h1>
-              <p className="text-white/30 text-xs mt-0.5">MH Legal Services Pty Ltd</p>
+      <header className="border-b border-zinc-900 sticky top-0 z-40 bg-black">
+        <div className="container mx-auto px-4 md:px-8 py-5 flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <Link href="/">
+              <div className="font-serif font-bold text-base tracking-wider cursor-pointer flex items-center gap-1">
+                <span className="text-white">MHLOPHE HOLDINGS</span>
+                <span className="text-accent ml-1">LEGAL</span>
+              </div>
+            </Link>
+            <div className="h-5 w-px bg-zinc-800" />
+            <div className="flex items-center gap-3">
+              <Shield className="w-4 h-4 text-accent" />
+              <span className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
+                Manager Dashboard
+              </span>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="text-right hidden sm:block">
+          <div className="flex items-center gap-6">
+            <div className="hidden sm:block text-right">
               <p className="text-white text-sm font-medium">{user?.email}</p>
-              <p className="text-[#C9A961] text-xs">{user?.isMasterAdmin ? "Master Admin" : "Manager"}</p>
+              <p className="text-accent text-xs font-semibold uppercase tracking-wider">
+                {user?.isMasterAdmin ? "Master Admin" : "Manager"}
+              </p>
             </div>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 text-white/40 hover:text-white text-sm transition-colors border border-white/10 px-3 py-2 rounded-lg hover:border-white/20"
+              className="flex items-center gap-2 border border-zinc-800 text-zinc-400 hover:border-white hover:text-white text-xs uppercase tracking-wider px-4 py-2 transition-colors font-semibold"
             >
-              <LogOut className="w-4 h-4" />
-              <span className="hidden sm:inline">Logout</span>
+              <LogOut className="w-3.5 h-3.5" />
+              Logout
             </button>
           </div>
         </div>
+        {/* Gold accent bar */}
+        <div className="h-[2px] bg-gradient-to-r from-accent via-accent/50 to-transparent" />
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
+      <main className="container mx-auto px-4 md:px-8 py-12">
+        {/* Master Admin badge */}
         {user?.isMasterAdmin && (
           <motion.div
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-6 bg-[#C9A961]/5 border border-[#C9A961]/20 rounded-xl px-5 py-3 flex items-center gap-3"
+            className="mb-8 flex items-center gap-4 border border-accent/20 bg-accent/5 px-6 py-4"
           >
-            <Shield className="w-4 h-4 text-[#C9A961]" />
-            <p className="text-[#C9A961] text-sm font-medium">
-              You are logged in as Master Admin — full system access active
+            <div className="h-[1px] w-8 bg-accent" />
+            <Shield className="w-4 h-4 text-accent" />
+            <p className="text-accent text-sm font-semibold uppercase tracking-widest">
+              Master Admin — Full system access active
             </p>
           </motion.div>
         )}
 
+        {/* Section label */}
+        <div className="flex items-center gap-4 mb-10">
+          <div className="h-[1px] w-12 bg-accent" />
+          <span className="text-accent uppercase tracking-widest text-xs font-semibold">Overview</span>
+        </div>
+
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <StatCard label="Total Applications" value={total} icon={Users} />
-          <StatCard label="With Stipend" value={withStipend} icon={CheckCircle} color="text-green-400" />
-          <StatCard label="No Stipend" value={total - withStipend} icon={XCircle} color="text-white/40" />
-          <StatCard label="Letter Uploaded" value={withLetter} icon={FileText} color="text-blue-400" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+          <StatCard label="Total Applications" value={total} icon={Users} accent />
+          <StatCard label="With Stipend" value={withStipend} icon={CheckCircle} />
+          <StatCard label="No Stipend" value={total - withStipend} icon={XCircle} />
+          <StatCard label="Letter Uploaded" value={withLetter} icon={FileText} />
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-3 mb-6">
-          <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-white/30" />
-            <span className="text-white/40 text-sm">Filter:</span>
+        <div className="flex items-center gap-4 mb-8 flex-wrap">
+          <div className="flex items-center gap-3">
+            <div className="h-[1px] w-8 bg-accent" />
+            <span className="text-accent uppercase tracking-widest text-xs font-semibold">Applications</span>
           </div>
-          <div className="relative">
-            <select
-              value={provinceFilter}
-              onChange={(e) => setProvinceFilter(e.target.value)}
-              className="bg-[#111] border border-white/10 rounded-lg px-3 py-2 text-white text-sm appearance-none pr-8 focus:outline-none focus:border-[#C9A961]/50"
+
+          <div className="flex items-center gap-3 ml-auto flex-wrap">
+            <Filter className="w-3.5 h-3.5 text-zinc-600" />
+
+            <div className="relative">
+              <select
+                value={provinceFilter}
+                onChange={(e) => setProvinceFilter(e.target.value)}
+                className="bg-zinc-950 border border-zinc-800 px-4 py-2 text-white text-xs appearance-none pr-8 focus:outline-none focus:border-accent uppercase tracking-wider font-semibold"
+              >
+                {PROVINCES.map((p) => (
+                  <option key={p} value={p} className="bg-black normal-case font-normal">
+                    {p === "all" ? "All Provinces" : p}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-zinc-600 pointer-events-none" />
+            </div>
+
+            <div className="relative">
+              <select
+                value={stipendFilter}
+                onChange={(e) => setStipendFilter(e.target.value)}
+                className="bg-zinc-950 border border-zinc-800 px-4 py-2 text-white text-xs appearance-none pr-8 focus:outline-none focus:border-accent uppercase tracking-wider font-semibold"
+              >
+                <option value="all" className="bg-black font-normal normal-case">All Stipend</option>
+                <option value="yes" className="bg-black font-normal normal-case">Stipend: Yes</option>
+                <option value="no" className="bg-black font-normal normal-case">Stipend: No</option>
+              </select>
+              <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-zinc-600 pointer-events-none" />
+            </div>
+
+            <button
+              onClick={fetchApplications}
+              className="flex items-center gap-2 border border-zinc-800 text-zinc-500 hover:border-white hover:text-white text-xs uppercase tracking-wider px-4 py-2 transition-colors font-semibold"
             >
-              {PROVINCES.map((p) => (
-                <option key={p} value={p} className="bg-[#111]">
-                  {p === "all" ? "All Provinces" : p}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/30 pointer-events-none" />
-          </div>
-          <div className="relative">
-            <select
-              value={stipendFilter}
-              onChange={(e) => setStipendFilter(e.target.value)}
-              className="bg-[#111] border border-white/10 rounded-lg px-3 py-2 text-white text-sm appearance-none pr-8 focus:outline-none focus:border-[#C9A961]/50"
+              <RefreshCw className="w-3.5 h-3.5" />
+              Refresh
+            </button>
+
+            <button
+              onClick={downloadCSV}
+              className="flex items-center gap-2 bg-accent text-black text-xs uppercase tracking-wider px-4 py-2 hover:bg-white transition-colors font-bold"
             >
-              <option value="all" className="bg-[#111]">All Stipend</option>
-              <option value="yes" className="bg-[#111]">Stipend: Yes</option>
-              <option value="no" className="bg-[#111]">Stipend: No</option>
-            </select>
-            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/30 pointer-events-none" />
+              <Download className="w-3.5 h-3.5" />
+              Export CSV
+            </button>
           </div>
-          <button
-            onClick={fetchApplications}
-            className="flex items-center gap-2 border border-white/10 text-white/40 px-3 py-2 rounded-lg hover:text-white hover:border-white/20 text-sm transition-colors"
-          >
-            <RefreshCw className="w-3.5 h-3.5" />
-            Refresh
-          </button>
-          <button
-            onClick={downloadCSV}
-            className="flex items-center gap-2 border border-[#C9A961]/30 text-[#C9A961] px-3 py-2 rounded-lg hover:bg-[#C9A961]/10 text-sm transition-colors ml-auto"
-          >
-            <Download className="w-3.5 h-3.5" />
-            Export CSV
-          </button>
         </div>
 
-        {/* Applications */}
+        {/* Applications list */}
         {loading ? (
-          <div className="flex items-center justify-center py-24">
-            <div className="w-8 h-8 border-2 border-[#C9A961]/30 border-t-[#C9A961] rounded-full animate-spin" />
+          <div className="flex items-center justify-center py-32">
+            <div className="w-8 h-8 border-2 border-zinc-800 border-t-accent animate-spin" />
           </div>
         ) : applications.length === 0 ? (
-          <div className="text-center py-24">
-            <AlertTriangle className="w-12 h-12 text-white/10 mx-auto mb-4" />
-            <p className="text-white/30">No applications found matching your filters.</p>
+          <div className="text-center py-32 border border-zinc-900">
+            <AlertTriangle className="w-10 h-10 text-zinc-800 mx-auto mb-4" />
+            <p className="text-zinc-600 text-sm uppercase tracking-widest font-semibold">
+              No applications found
+            </p>
           </div>
         ) : provinceFilter !== "all" ? (
-          /* flat list when filtering by province */
-          <div className="space-y-3">
+          <div className="space-y-2">
             {applications.map((app) => (
               <ApplicationRow
                 key={app.id}
@@ -223,17 +250,16 @@ export default function AdminDashboard() {
             ))}
           </div>
         ) : (
-          /* grouped by province */
-          <div className="space-y-8">
+          <div className="space-y-10">
             {Object.entries(grouped).map(([province, apps]) => (
               <div key={province}>
-                <div className="flex items-center gap-3 mb-3">
-                  <MapPin className="w-4 h-4 text-[#C9A961]" />
-                  <h2 className="text-[#C9A961] font-medium">{province}</h2>
-                  <span className="text-white/20 text-sm">({apps.length})</span>
-                  <div className="flex-1 h-px bg-white/5" />
+                <div className="flex items-center gap-4 mb-4">
+                  <MapPin className="w-4 h-4 text-accent" />
+                  <span className="text-accent font-semibold text-sm uppercase tracking-widest">{province}</span>
+                  <span className="text-zinc-700 text-xs">({apps.length})</span>
+                  <div className="flex-1 h-px bg-zinc-900" />
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {apps.map((app) => (
                     <ApplicationRow
                       key={app.id}
@@ -252,40 +278,34 @@ export default function AdminDashboard() {
   );
 }
 
-function ApplicationRow({
-  app, expanded, onToggle,
-}: {
-  app: Application;
-  expanded: boolean;
-  onToggle: () => void;
+function ApplicationRow({ app, expanded, onToggle }: {
+  app: Application; expanded: boolean; onToggle: () => void;
 }) {
   const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 
   return (
-    <div className="bg-[#111] border border-white/8 rounded-xl overflow-hidden">
+    <div className="border border-zinc-900 hover:border-zinc-700 transition-colors">
       <button
         onClick={onToggle}
-        className="w-full flex items-center gap-4 p-4 hover:bg-white/[0.02] transition-colors text-left"
+        className="w-full flex items-center gap-6 px-6 py-4 text-left hover:bg-zinc-950 transition-colors"
       >
-        <div className="w-8 h-8 rounded-lg bg-[#C9A961]/10 flex items-center justify-center flex-shrink-0">
-          <span className="text-[#C9A961] text-xs font-bold">#{app.id}</span>
-        </div>
+        <span className="text-accent font-serif font-bold text-sm w-10 shrink-0">#{app.id}</span>
         <div className="flex-1 min-w-0">
-          <p className="text-white font-medium truncate">{app.full_names}</p>
-          <p className="text-white/30 text-xs">{app.email}</p>
+          <p className="text-white font-semibold text-sm truncate">{app.full_names}</p>
+          <p className="text-zinc-600 text-xs">{app.email}</p>
         </div>
-        <div className="flex items-center gap-3 flex-shrink-0">
-          <span className={`text-xs px-2.5 py-1 rounded-full border font-medium ${
+        <div className="flex items-center gap-4 shrink-0">
+          <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 border ${
             app.stipend_status
-              ? "bg-green-500/10 border-green-500/20 text-green-400"
-              : "bg-white/5 border-white/10 text-white/30"
+              ? "border-accent/40 text-accent bg-accent/5"
+              : "border-zinc-800 text-zinc-600"
           }`}>
             {app.stipend_status ? "Stipend" : "No Stipend"}
           </span>
-          <span className="text-white/20 text-xs hidden md:block">
+          <span className="text-zinc-700 text-xs hidden md:block">
             {new Date(app.created_at).toLocaleDateString("en-ZA")}
           </span>
-          <ChevronDown className={`w-4 h-4 text-white/20 transition-transform ${expanded ? "rotate-180" : ""}`} />
+          <ChevronDown className={`w-4 h-4 text-zinc-700 transition-transform ${expanded ? "rotate-180" : ""}`} />
         </div>
       </button>
 
@@ -293,40 +313,40 @@ function ApplicationRow({
         <motion.div
           initial={{ height: 0, opacity: 0 }}
           animate={{ height: "auto", opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
-          className="border-t border-white/5 px-4 pb-4 pt-4"
+          className="border-t border-zinc-900 px-6 py-6"
         >
-          <div className="grid md:grid-cols-2 gap-4 text-sm">
+          <div className="grid md:grid-cols-3 gap-6 text-sm">
             <div>
-              <p className="text-white/30 text-xs uppercase tracking-wider mb-1">SA ID Number</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-zinc-600 mb-2">SA ID Number</p>
               <p className="text-white font-mono">{app.sa_id_number}</p>
             </div>
             <div>
-              <p className="text-white/30 text-xs uppercase tracking-wider mb-1">Province</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-zinc-600 mb-2">Province</p>
               <p className="text-white">{app.province || "—"}</p>
             </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-zinc-600 mb-2">Submitted</p>
+              <p className="text-white">{new Date(app.created_at).toLocaleString("en-ZA")}</p>
+            </div>
             <div className="md:col-span-2">
-              <p className="text-white/30 text-xs uppercase tracking-wider mb-1">Physical Address</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-zinc-600 mb-2">Physical Address</p>
               <p className="text-white">{app.physical_address}</p>
             </div>
             <div>
-              <p className="text-white/30 text-xs uppercase tracking-wider mb-1">Submitted</p>
-              <p className="text-white">{new Date(app.created_at).toLocaleString("en-ZA")}</p>
-            </div>
-            <div>
-              <p className="text-white/30 text-xs uppercase tracking-wider mb-1">Training Letter</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-zinc-600 mb-2">Training Letter</p>
               {app.training_letter_path ? (
                 <a
                   href={`${BASE}/api/applications/${app.id}/letter`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 text-[#C9A961] hover:underline"
+                  className="flex items-center gap-2 text-accent hover:text-white transition-colors text-sm font-semibold uppercase tracking-wider"
                 >
                   <Eye className="w-3.5 h-3.5" />
                   View / Download
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </a>
               ) : (
-                <p className="text-white/20">Not uploaded</p>
+                <p className="text-zinc-700 text-xs uppercase tracking-wider">Not uploaded</p>
               )}
             </div>
           </div>

@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
+import { usePageTracker } from "@/hooks/usePageTracker";
 
 import Home from "@/pages/Home";
 import About from "@/pages/About";
@@ -32,6 +33,7 @@ function ProtectedRoute({ component: Component }: { component: React.ComponentTy
 }
 
 function Router() {
+  usePageTracker();
   return (
     <Switch>
       <Route path="/" component={Home} />

@@ -8,8 +8,8 @@ import { SiteLayout } from "@/components/layout/SiteLayout";
 
 export default function Home() {
   useSeo({
-    title: "MH LEGAL SERVICES Pty Ltd | Altimate Chance To Freedom",
-    description: "Professional legal assistance across South Africa — R200,000 legal cover, CCMA representation, contract drafting, debt collection, and civil rights advocacy."
+    title: "MH LEGAL SERVICES Pty Ltd | Corporate Insurance Brokerage",
+    description: "A South African corporate insurance brokerage with 100+ agents. Product distribution, market activation, sales representation, agent training, in-service training, and compliance management."
   });
 
   return (

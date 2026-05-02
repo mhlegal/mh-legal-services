@@ -21,22 +21,22 @@ export function PartnershipCTA() {
             </motion.div>
 
             <h2 className="text-3xl md:text-5xl font-serif font-bold leading-tight">
-              Work With a Firm That Delivers.
+              Your Altimate Chance To Freedom.
             </h2>
 
             <p className="text-gray-400 text-lg max-w-2xl font-light leading-relaxed">
-              Whether you need insurance brokerage, sales representation, market activation, or trained personnel — MH LEGAL SERVICES Pty Ltd is built to move fast and perform consistently.
+              Whether you need legal cover, CCMA representation, a watertight contract, or someone to fight for your rights — MH LEGAL SERVICES Pty Ltd is ready.
             </p>
 
             <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild size="lg" className="bg-accent text-black hover:bg-white hover:text-black rounded-none h-14 px-8 text-base font-bold group transition-all">
-                <Link href="/contact">
-                  Contact Us
+                <Link href="/legal-services">
+                  View Legal Services
                   <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="border-zinc-600 text-white hover:border-white rounded-none h-14 px-8 text-base font-semibold transition-all">
-                <Link href="/careers">Apply Now</Link>
+                <Link href="/contact">Contact Us</Link>
               </Button>
             </div>
           </div>

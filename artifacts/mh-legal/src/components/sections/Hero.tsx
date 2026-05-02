@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { ArrowRight, ChevronDown, Phone } from "lucide-react";
 
 export function Hero() {
   const handleLearnMore = () => {
@@ -31,7 +31,7 @@ export function Hero() {
         >
           <div className="h-[1px] w-16 bg-accent" />
           <span className="text-accent uppercase tracking-[0.2em] text-xs font-bold">
-            Corporate Insurance Brokerage · South Africa
+            Legal Assistance · South Africa
           </span>
         </motion.div>
 
@@ -41,9 +41,8 @@ export function Hero() {
           transition={{ duration: 0.7, delay: 0.1 }}
           className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-bold leading-[1.05] mb-6 max-w-5xl"
         >
-          We Build <span className="text-accent">Systems.</span>
-          <br />
-          We Develop <span className="italic font-light text-gray-300">People.</span>
+          Altimate Chance <br />
+          <span className="text-accent">To Freedom.</span>
         </motion.h1>
 
         <motion.p
@@ -52,7 +51,7 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.25 }}
           className="text-lg md:text-xl text-gray-400 max-w-2xl leading-relaxed mb-12 font-light"
         >
-          MH LEGAL SERVICES Pty Ltd is a corporate insurance brokerage with a network of 100+ agents across South Africa. We distribute products, activate markets, and develop the professionals who carry the work forward.
+          MH LEGAL SERVICES Pty Ltd delivers professional legal assistance for individuals and businesses across South Africa — R200,000 legal cover, CCMA representation, contract drafting, debt collection, and civil rights advocacy.
         </motion.p>
 
         <motion.div
@@ -62,20 +61,25 @@ export function Hero() {
           className="flex flex-col sm:flex-row gap-4"
         >
           <Button
-            onClick={handleLearnMore}
+            asChild
             size="lg"
             className="bg-accent text-black hover:bg-white hover:text-black rounded-none h-14 px-10 text-base font-bold tracking-wide group transition-all"
           >
-            Learn More
-            <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+            <Link href="/legal-services">
+              Our Legal Services
+              <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+            </Link>
           </Button>
           <Button
             asChild
             size="lg"
             variant="outline"
-            className="border-white text-white hover:bg-white hover:text-black rounded-none h-14 px-10 text-base font-bold tracking-wide transition-all"
+            className="border-white/40 text-white hover:bg-white hover:text-black rounded-none h-14 px-10 text-base font-bold tracking-wide transition-all flex items-center gap-3"
           >
-            <Link href="/careers">Apply Now</Link>
+            <a href="tel:+27310027797">
+              <Phone size={18} />
+              +27 31 002 7797
+            </a>
           </Button>
         </motion.div>
 
@@ -84,12 +88,13 @@ export function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.7 }}
-          className="mt-20 pt-10 border-t border-zinc-800 grid grid-cols-2 md:grid-cols-3 gap-8 max-w-2xl"
+          className="mt-20 pt-10 border-t border-zinc-800 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl"
         >
           {[
-            { value: "100+", label: "Licensed Agents" },
-            { value: "6", label: "Service Lines" },
-            { value: "KZN", label: "Provincial Reach" },
+            { value: "R200K", label: "Legal Cover" },
+            { value: "5", label: "Practice Areas" },
+            { value: "CCMA", label: "Representation" },
+            { value: "KZN+", label: "National Reach" },
           ].map((stat) => (
             <div key={stat.label}>
               <div className="text-3xl md:text-4xl font-serif font-bold text-accent">{stat.value}</div>
@@ -104,6 +109,8 @@ export function Hero() {
         animate={{ opacity: 1 }}
         transition={{ delay: 1.2 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gray-600"
+        onClick={handleLearnMore}
+        style={{ cursor: "pointer" }}
       >
         <ChevronDown size={20} className="animate-bounce" />
       </motion.div>

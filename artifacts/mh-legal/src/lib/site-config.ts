@@ -1,8 +1,8 @@
 export const siteConfig = {
   name: "MH LEGAL SERVICES Pty Ltd",
   shortName: "MHLS",
-  tagline: "We Build Systems. We Develop People.",
-  description: "A corporate insurance brokerage operating across South Africa with a network of 100+ agents. We distribute products, activate markets, and develop the next generation of sales and compliance professionals.",
+  tagline: "Altimate Chance To Freedom",
+  description: "Professional legal assistance for individuals and businesses across South Africa — from legal cover and labour law to contract drafting, debt collection, and civil rights.",
   url: "https://mhlopheholdings.co.za",
   team: {
     leadership: [

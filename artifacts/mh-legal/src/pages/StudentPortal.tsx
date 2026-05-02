@@ -40,19 +40,13 @@ export default function StudentPortal() {
 
   async function uploadFile(file: File): Promise<string | undefined> {
     try {
-      const { uploadURL, objectPath } = await apiJson<{ uploadURL: string; objectPath: string }>(
-        "/applications/upload-url",
-        {
-          method: "POST",
-          body: JSON.stringify({ fileName: file.name, contentType: file.type || "application/octet-stream" }),
-        }
-      );
-      setUploadProgress(40);
-      await fetch(uploadURL, {
-        method: "PUT",
-        headers: { "Content-Type": file.type || "application/octet-stream" },
-        body: file,
-      });
+      setUploadProgress(20);
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/api/applications/upload", { method: "POST", body: formData });
+      setUploadProgress(80);
+      if (!res.ok) throw new Error("Upload failed");
+      const { objectPath } = await res.json();
       setUploadProgress(100);
       return objectPath;
     } catch {
@@ -324,9 +318,9 @@ export default function StudentPortal() {
                 <label className="block text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-3">
                   In-Service Training Letter
                 </label>
-                <div
-                  onClick={() => fileRef.current?.click()}
-                  className={`border-2 border-dashed p-10 text-center cursor-pointer transition-all ${
+                <label
+                  htmlFor="training-letter-portal"
+                  className={`block border-2 border-dashed p-10 text-center cursor-pointer transition-all ${
                     selectedFile
                       ? "border-accent bg-accent/5"
                       : "border-zinc-200 hover:border-zinc-400"
@@ -348,13 +342,14 @@ export default function StudentPortal() {
                     </>
                   )}
                   <input
+                    id="training-letter-portal"
                     ref={fileRef}
                     type="file"
                     className="hidden"
                     accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
                     onChange={(e) => setSelectedFile(e.target.files?.[0] ?? null)}
                   />
-                </div>
+                </label>
               </div>
 
               {/* Upload progress */}

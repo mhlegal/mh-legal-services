@@ -1,8 +1,11 @@
 import { Router } from "express";
+import multer from "multer";
 import { query } from "../lib/db.js";
 import { sendApplicationNotification } from "../lib/email.js";
 import { objectStorage } from "../lib/objectStorage.js";
 import { logger } from "../lib/logger.js";
+
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
 
 const router = Router();
 
@@ -13,6 +16,24 @@ function requireAuth(req: any, res: any, next: any) {
   }
   next();
 }
+
+router.post("/applications/upload", upload.single("file"), async (req, res) => {
+  if (!req.file) {
+    res.status(400).json({ error: "No file provided" });
+    return;
+  }
+  try {
+    const objectPath = await objectStorage.uploadBuffer(
+      req.file.originalname,
+      req.file.mimetype || "application/octet-stream",
+      req.file.buffer
+    );
+    res.json({ objectPath });
+  } catch (err) {
+    req.log.error({ err }, "Failed to upload file");
+    res.status(500).json({ error: "Failed to upload file" });
+  }
+});
 
 router.post("/applications/upload-url", async (req, res) => {
   const { fileName, contentType } = req.body as { fileName: string; contentType: string };

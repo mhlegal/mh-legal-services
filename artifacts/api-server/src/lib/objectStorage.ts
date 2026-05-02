@@ -39,6 +39,14 @@ export class ObjectStorageService {
     return { uploadURL, objectPath };
   }
 
+  async uploadBuffer(fileName: string, contentType: string, buffer: Buffer): Promise<string> {
+    const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const gcsPath = `${PRIVATE_DIR}/${id}-${encodeURIComponent(fileName)}`;
+    const file = this.bucket.file(gcsPath);
+    await file.save(buffer, { contentType });
+    return `/objects/${gcsPath}`;
+  }
+
   async downloadObject(objectPath: string): Promise<{ stream: NodeJS.ReadableStream; contentType: string }> {
     const gcsPath = objectPath.replace(/^\/objects\//, "");
     const file = this.bucket.file(gcsPath);

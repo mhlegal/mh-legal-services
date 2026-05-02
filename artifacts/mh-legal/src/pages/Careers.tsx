@@ -317,9 +317,8 @@ export default function Careers() {
                     <label className="block uppercase text-xs tracking-wider text-black font-bold mb-2">
                       In-Service Training Letter (Upload)
                     </label>
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
+                    <label
+                      htmlFor="training-letter-careers"
                       className="w-full border-2 border-dashed border-zinc-300 hover:border-accent transition-colors p-6 flex flex-col items-center gap-3 cursor-pointer bg-zinc-50 hover:bg-white"
                     >
                       <Upload size={22} className="text-accent" />
@@ -327,17 +326,18 @@ export default function Careers() {
                         {fileName ? fileName : "Click to upload your training letter (PDF, Word, or image)"}
                       </span>
                       {!fileName && <span className="text-xs text-gray-400">You can also attach it directly when your email opens</span>}
-                    </button>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                      className="hidden"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        setFileName(file ? file.name : "");
-                      }}
-                    />
+                      <input
+                        id="training-letter-careers"
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          setFileName(file ? file.name : "");
+                        }}
+                      />
+                    </label>
                   </div>
 
                   <FormField

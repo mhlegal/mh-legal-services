@@ -10,7 +10,7 @@ import { Users, Award, MapPin } from "lucide-react";
 export default function About() {
   useSeo({
     title: "About Us | MH LEGAL SERVICES Pty Ltd",
-    description: "MH LEGAL SERVICES Pty Ltd is a corporate insurance brokerage with 100+ agents across KwaZulu-Natal, in partnership with Mthashana TVET College for in-service training."
+    description: "MH LEGAL SERVICES Pty Ltd is a corporate insurance brokerage with 100+ agents across all 9 provinces of South Africa, in partnership with Mthashana TVET College for in-service training."
   });
 
   return (
@@ -53,10 +53,10 @@ export default function About() {
         <div className="container mx-auto px-4 md:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
-              { value: "100+", label: "Licensed Agents" },
+              { value: "100+", label: "Agents Nationwide" },
               { value: "6", label: "Service Lines" },
               { value: "TVET", label: "College Partnership" },
-              { value: "KZN", label: "Provincial Reach" },
+              { value: "9", label: "Provinces Covered" },
             ].map((s) => (
               <div key={s.label} className="text-center">
                 <div className="text-3xl md:text-4xl font-serif font-bold text-black">{s.value}</div>

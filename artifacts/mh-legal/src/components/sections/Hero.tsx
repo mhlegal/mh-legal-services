@@ -86,9 +86,9 @@ export function Hero() {
           className="mt-20 pt-10 border-t border-zinc-800 grid grid-cols-2 md:grid-cols-3 gap-8 max-w-2xl"
         >
           {[
-            { value: "100+", label: "Licensed Agents" },
+            { value: "100+", label: "Agents Nationwide" },
             { value: "6", label: "Service Lines" },
-            { value: "KZN", label: "Provincial Reach" },
+            { value: "9", label: "Provinces Covered" },
           ].map((stat) => (
             <div key={stat.label}>
               <div className="text-3xl md:text-4xl font-serif font-bold text-accent">{stat.value}</div>

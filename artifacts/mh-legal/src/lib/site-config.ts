@@ -25,7 +25,7 @@ export const siteConfig = {
     headOfField: "phirid871@gmail.com",
     whatsapp: "+27 73 785 3867",
     whatsappUrl: "https://wa.me/27737853867",
-    location: "KwaZulu-Natal, South Africa"
+    location: "South Africa (Agents Nationwide)"
   },
   nav: [
     { name: "Home", path: "/" },

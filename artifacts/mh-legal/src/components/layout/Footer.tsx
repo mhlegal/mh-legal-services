@@ -89,7 +89,7 @@ export function Footer() {
       <div className="container mx-auto px-4 md:px-8 mt-16 pt-8 border-t border-gray-800 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
         <p>© {currentYear} {siteConfig.name}. All rights reserved.</p>
         <p className="flex items-center gap-2">
-          Based in <span className="text-white font-medium">KwaZulu-Natal, South Africa</span>
+          HQ: <span className="text-white font-medium">KwaZulu-Natal</span> · Agents across <span className="text-white font-medium">all 9 provinces</span>
         </p>
       </div>
     </footer>

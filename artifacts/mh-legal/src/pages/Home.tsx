@@ -1,8 +1,6 @@
 import { useSeo } from "@/hooks/use-seo";
 import { Hero } from "@/components/sections/Hero";
 import { WhatWeDo } from "@/components/sections/WhatWeDo";
-import { HowWeHelp } from "@/components/sections/HowWeHelp";
-import { TrainingHighlight } from "@/components/sections/TrainingHighlight";
 import { PartnershipCTA } from "@/components/sections/PartnershipCTA";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 
@@ -16,8 +14,6 @@ export default function Home() {
     <SiteLayout>
       <Hero />
       <WhatWeDo />
-      <HowWeHelp />
-      <TrainingHighlight />
       <PartnershipCTA />
     </SiteLayout>
   );

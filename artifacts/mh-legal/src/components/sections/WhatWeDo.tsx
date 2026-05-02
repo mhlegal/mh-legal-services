@@ -37,9 +37,9 @@ const services = [
 
 export function WhatWeDo() {
   return (
-    <section id="what-we-do" className="py-24 md:py-32 bg-white text-black relative">
+    <section id="what-we-do" className="py-16 md:py-20 bg-white text-black relative">
       <div className="container mx-auto px-4 md:px-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-16 lg:mb-24">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-12 lg:mb-16">
           <div className="max-w-2xl">
             <div className="flex items-center gap-4 mb-6">
               <div className="h-[1px] w-12 bg-accent" />

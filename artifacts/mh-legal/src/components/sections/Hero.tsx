@@ -41,9 +41,8 @@ export function Hero() {
           transition={{ duration: 0.7, delay: 0.1 }}
           className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-bold leading-[1.05] mb-6 max-w-5xl"
         >
-          We Build <span className="text-accent">Systems.</span>
-          <br />
-          We Develop <span className="italic font-light text-gray-300">People.</span>
+          Ultimate Chance <br />
+          <span className="text-accent italic font-light">To Freedom.</span>
         </motion.h1>
 
         <motion.p

@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Upload, CheckCircle, User, CreditCard, MapPin, Mail, ArrowRight, FileText, AlertCircle } from "lucide-react";
 import { SiteLayout } from "@/components/layout/SiteLayout";
-import { apiJson } from "@/lib/api";
+import { apiJson, BASE } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { useSeo } from "@/hooks/use-seo";
 
@@ -43,19 +43,35 @@ export default function StudentPortal() {
       setUploadProgress(20);
       const formData = new FormData();
       formData.append("file", file);
-      const res = await fetch("/api/applications/upload", { method: "POST", body: formData });
+      const res = await fetch(`${BASE}/api/applications/upload`, {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
       setUploadProgress(80);
-      if (!res.ok) throw new Error("Upload failed");
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error((body as any).error ?? "Upload failed");
+      }
       const { objectPath } = await res.json();
       setUploadProgress(100);
       return objectPath;
-    } catch {
+    } catch (err: any) {
+      toast({
+        title: "File upload failed",
+        description: err.message ?? "Could not upload your letter. Your application will still be submitted without it.",
+        variant: "destructive",
+      });
       return undefined;
     }
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!form.fullNames.trim() || !form.saIdNumber.trim() || !form.physicalAddress.trim() || !form.email.trim()) {
+      toast({ title: "Please fill in all required fields", variant: "destructive" });
+      return;
+    }
     if (!form.province) {
       toast({ title: "Please select your province", variant: "destructive" });
       return;

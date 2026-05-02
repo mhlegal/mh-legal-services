@@ -10,6 +10,9 @@ import { logger } from "./lib/logger.js";
 const app: Express = express();
 const PgSession = connectPgSimple(session);
 
+// Trust the Replit reverse proxy so secure cookies work in production
+app.set("trust proxy", 1);
+
 app.use(
   pinoHttp({
     logger,
@@ -42,6 +45,7 @@ app.use(
       secure: process.env.NODE_ENV === "production",
       httpOnly: true,
       maxAge: 60 * 60 * 1000,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     },
   })
 );

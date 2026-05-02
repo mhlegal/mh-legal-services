@@ -76,16 +76,19 @@ router.post("/applications", async (req, res) => {
     return;
   }
 
+  req.log.info({ fullNames, email, province }, "Received application submission");
+
   try {
     const result = await query(
       `INSERT INTO student_applications
         (full_names, sa_id_number, physical_address, email, stipend_status, province, willing_to_relocate, training_letter_path)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING id`,
-      [fullNames, saIdNumber, physicalAddress, email, stipendStatus, province, willingToRelocate ?? false, trainingLetterPath ?? null]
+      [fullNames, saIdNumber, physicalAddress, email, !!stipendStatus, province, !!(willingToRelocate ?? false), trainingLetterPath ?? null]
     );
 
     const id = result.rows[0].id;
+    req.log.info({ id }, "Application saved successfully");
 
     sendApplicationNotification({
       fullNames,

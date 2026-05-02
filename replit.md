@@ -32,7 +32,7 @@ See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and pa
 
 Full-stack Legal Tech Platform for **MH LEGAL SERVICES Pty Ltd** / **MHLOPHE HOLDINGS LEGAL SERVICES**.
 
-- **Brand name**: MHLOPHE HOLDINGS LEGAL SERVICES. Never abbreviate to "MH LEGAL" in copy.
+- **Brand name**: MH LEGAL SERVICES Pty Ltd. Display in navbar/logos as "MH LEGAL" (white) + "SERVICES" (gold).
 - **Tagline**: "We Build Systems. We Develop People."
 - **Visual system**: Black / White / Gold (`#C9A961`). Playfair Display headings, Inter body. Framer-motion reveals. No new colors.
 

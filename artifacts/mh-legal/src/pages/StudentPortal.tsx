@@ -29,7 +29,7 @@ export default function StudentPortal() {
   });
 
   useSeo({
-    title: "Student HR Portal | MHLOPHE HOLDINGS LEGAL SERVICES",
+    title: "Student HR Portal | MH LEGAL SERVICES Pty Ltd",
     description: "Apply for an In-Service Training placement with MH Legal Services."
   });
 

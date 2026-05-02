@@ -12,7 +12,7 @@ export function Footer() {
         <div className="md:col-span-5 space-y-6">
           <Link href="/">
             <div className="font-serif font-bold text-2xl tracking-wider cursor-pointer leading-tight">
-              MHLOPHE HOLDINGS <br /><span className="text-accent">LEGAL SERVICES</span>
+              MH LEGAL SERVICES <br /><span className="text-accent">PTY LTD</span>
             </div>
           </Link>
           <p className="text-gray-400 text-lg max-w-md">{siteConfig.tagline}</p>

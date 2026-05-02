@@ -10,7 +10,7 @@ const recipients = [
   {
     id: "company",
     label: "General Company Enquiry",
-    name: "MHLOPHE HOLDINGS LEGAL SERVICES",
+    name: "MH LEGAL SERVICES Pty Ltd",
     email: siteConfig.contact.company,
     role: "Company Email",
     description: "General enquiries about our services, partnerships, or corporate matters.",
@@ -43,8 +43,8 @@ const recipients = [
 
 export default function Contact() {
   useSeo({
-    title: "Contact Us | MHLOPHE HOLDINGS LEGAL SERVICES",
-    description: "Get in touch with MHLOPHE HOLDINGS LEGAL SERVICES. Select the right contact — company email, Provincial Manager, Field Manager, or Head of Field Operations."
+    title: "Contact Us | MH LEGAL SERVICES Pty Ltd",
+    description: "Get in touch with MH LEGAL SERVICES Pty Ltd. Select the right contact — company email, Provincial Manager, Field Manager, or Head of Field Operations."
   });
 
   const [selected, setSelected] = useState<string | null>(null);

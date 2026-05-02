@@ -7,8 +7,8 @@ import { Mail } from "lucide-react";
 
 export default function Team() {
   useSeo({
-    title: "Our Team | MHLOPHE HOLDINGS LEGAL SERVICES",
-    description: "Meet the leadership and field management team at MHLOPHE HOLDINGS LEGAL SERVICES — the people building, managing, and activating the firm's 100+ agent network."
+    title: "Our Team | MH LEGAL SERVICES Pty Ltd",
+    description: "Meet the leadership and field management team at MH LEGAL SERVICES Pty Ltd — the people building, managing, and activating the firm's 100+ agent network."
   });
 
   return (
@@ -76,7 +76,7 @@ export default function Team() {
                 </div>
                 {idx === 0 && (
                   <p className="text-gray-600 text-sm leading-relaxed px-2">
-                    Philani Mbooi founded MHLOPHE HOLDINGS LEGAL SERVICES with a single goal: build a brokerage firm that develops the people inside it as aggressively as it grows the business. As MD, he sets strategy, leads the agent network, and oversees the in-service training programme directly.
+                    Philani Mbooi founded MH LEGAL SERVICES Pty Ltd with a single goal: build a brokerage firm that develops the people inside it as aggressively as it grows the business. As MD, he sets strategy, leads the agent network, and oversees the in-service training programme directly.
                   </p>
                 )}
                 {idx === 1 && (
@@ -146,7 +146,7 @@ export default function Team() {
               The Team Is Always Growing.
             </h2>
             <p className="text-gray-400 text-lg leading-relaxed mb-10 font-light">
-              Whether you are a Business Management student looking for in-service placement or a young professional seeking your first career opportunity — there is a path for you at MHLOPHE HOLDINGS LEGAL SERVICES.
+              Whether you are a Business Management student looking for in-service placement or a young professional seeking your first career opportunity — there is a path for you at MH LEGAL SERVICES Pty Ltd.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a

@@ -69,7 +69,7 @@ const services = [
 
 export default function Services() {
   useSeo({
-    title: "Our Services | MHLOPHE HOLDINGS LEGAL SERVICES",
+    title: "Our Services | MH LEGAL SERVICES Pty Ltd",
     description: "Six focused service lines: Product Distribution, Market Activation, Sales Representation, Agent Training, In-Service Training, and Compliance Management."
   });
 

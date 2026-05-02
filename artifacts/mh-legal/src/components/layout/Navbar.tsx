@@ -28,8 +28,8 @@ export function Navbar() {
       <div className="container mx-auto px-4 md:px-8 flex items-center justify-between">
         <Link href="/">
           <div className="font-serif font-bold text-lg md:text-xl tracking-wider cursor-pointer flex items-center gap-1 leading-tight">
-            <span className="text-white">MHLOPHE HOLDINGS</span>
-            <span className="text-accent ml-1">LEGAL</span>
+            <span className="text-white">MH LEGAL</span>
+            <span className="text-accent ml-1">SERVICES</span>
           </div>
         </Link>
 

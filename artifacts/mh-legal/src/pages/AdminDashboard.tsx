@@ -108,8 +108,8 @@ export default function AdminDashboard() {
           <div className="flex items-center gap-6">
             <Link href="/">
               <div className="font-serif font-bold text-base tracking-wider cursor-pointer flex items-center gap-1">
-                <span className="text-white">MHLOPHE HOLDINGS</span>
-                <span className="text-accent ml-1">LEGAL</span>
+                <span className="text-white">MH LEGAL</span>
+                <span className="text-accent ml-1">SERVICES</span>
               </div>
             </Link>
             <div className="h-5 w-px bg-zinc-800" />

@@ -52,7 +52,7 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.25 }}
           className="text-lg md:text-xl text-gray-400 max-w-2xl leading-relaxed mb-12 font-light"
         >
-          MHLOPHE HOLDINGS LEGAL SERVICES is a corporate insurance brokerage with a network of 100+ agents across South Africa. We distribute products, activate markets, and develop the professionals who carry the work forward.
+          MH LEGAL SERVICES Pty Ltd is a corporate insurance brokerage with a network of 100+ agents across South Africa. We distribute products, activate markets, and develop the professionals who carry the work forward.
         </motion.p>
 
         <motion.div

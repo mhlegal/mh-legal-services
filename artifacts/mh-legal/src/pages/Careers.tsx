@@ -38,8 +38,8 @@ const formSchema = z.object({
 
 export default function Careers() {
   useSeo({
-    title: "Careers & Training | MHLOPHE HOLDINGS LEGAL SERVICES",
-    description: "Apply for In-Service Training at MHLOPHE HOLDINGS LEGAL SERVICES. Embedded inside a live corporate insurance brokerage in partnership with Mthashana TVET College."
+    title: "Careers & Training | MH LEGAL SERVICES Pty Ltd",
+    description: "Apply for In-Service Training at MH LEGAL SERVICES Pty Ltd. Embedded inside a live corporate insurance brokerage in partnership with Mthashana TVET College."
   });
 
   const { toast } = useToast();
@@ -60,7 +60,7 @@ export default function Careers() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    const subject = encodeURIComponent("In-Service Training Application — MHLOPHE HOLDINGS LEGAL SERVICES");
+    const subject = encodeURIComponent("In-Service Training Application — MH LEGAL SERVICES Pty Ltd");
     const body = encodeURIComponent(
       `IN-SERVICE TRAINING APPLICATION\n` +
       `================================\n\n` +
@@ -71,7 +71,7 @@ export default function Careers() {
       `Email: ${values.email}\n\n` +
       `About the Applicant:\n${values.aboutYou}\n\n` +
       (fileName ? `Training Letter Attached: ${fileName}\n` : `No training letter file attached via form — applicant should attach separately.\n`) +
-      `\n--- Submitted via MHLOPHE HOLDINGS LEGAL SERVICES website ---`
+      `\n--- Submitted via MH LEGAL SERVICES Pty Ltd website ---`
     );
     window.location.href = `mailto:${siteConfig.contact.provincial}?subject=${subject}&body=${body}`;
     toast({
@@ -112,7 +112,7 @@ export default function Careers() {
             transition={{ delay: 0.2 }}
             className="mt-8 text-xl text-gray-400 max-w-2xl font-light leading-relaxed"
           >
-            Two pathways into MHLOPHE HOLDINGS LEGAL SERVICES — an in-service training placement for Business Management students, and a youth employment opportunity for candidates aged 18–30.
+            Two pathways into MH LEGAL SERVICES Pty Ltd — an in-service training placement for Business Management students, and a youth employment opportunity for candidates aged 18–30.
           </motion.p>
         </div>
       </section>
@@ -318,7 +318,7 @@ export default function Careers() {
                         </div>
                         <FormControl>
                           <Textarea
-                            placeholder="Tell us who you are, why you want to join MHLOPHE HOLDINGS LEGAL SERVICES, and what you hope to gain from the in-service training programme. Maximum 150 words."
+                            placeholder="Tell us who you are, why you want to join MH LEGAL SERVICES Pty Ltd, and what you hope to gain from the in-service training programme. Maximum 150 words."
                             className="min-h-[140px] rounded-none border-zinc-300 focus-visible:ring-accent bg-white resize-none"
                             {...field}
                             onChange={(e) => {
@@ -369,7 +369,7 @@ export default function Careers() {
                 Ages 18–30: Start Your Career Here.
               </h2>
               <p className="text-gray-400 leading-relaxed">
-                If you are between 18 and 30 years old and looking for your first real career opportunity in sales, insurance, or business operations — MHLOPHE HOLDINGS LEGAL SERVICES wants to hear from you.
+                If you are between 18 and 30 years old and looking for your first real career opportunity in sales, insurance, or business operations — MH LEGAL SERVICES Pty Ltd wants to hear from you.
               </p>
               <p className="text-gray-400 leading-relaxed">
                 We are actively developing young South African professionals through our agent training programme and field operations. No experience is required — only hunger, commitment, and the willingness to work hard in a structured, high-performance environment.
@@ -380,7 +380,7 @@ export default function Careers() {
                   Send your CV to our Provincial Manager. In the subject line, write <strong className="text-white">"Youth Employment Application — [Your Name]"</strong>. Include a brief cover note telling us who you are and why you want to work in the insurance brokerage sector.
                 </p>
                 <a
-                  href={`mailto:${siteConfig.contact.provincial}?subject=Youth%20Employment%20Application&body=Dear%20Provincial%20Manager%2C%0A%0AI%20would%20like%20to%20apply%20for%20a%20youth%20employment%20opportunity%20at%20MHLOPHE%20HOLDINGS%20LEGAL%20SERVICES.%0A%0A`}
+                  href={`mailto:${siteConfig.contact.provincial}?subject=Youth%20Employment%20Application&body=Dear%20Provincial%20Manager%2C%0A%0AI%20would%20like%20to%20apply%20for%20a%20youth%20employment%20opportunity%20at%20MH%20LEGAL%20SERVICES%20Pty%20Ltd.%0A%0A`}
                   className="inline-flex items-center gap-2 bg-accent text-black hover:bg-white rounded-none h-12 px-8 font-bold text-sm transition-all"
                 >
                   <Mail size={16} />

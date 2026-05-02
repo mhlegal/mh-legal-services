@@ -25,7 +25,7 @@ export function PartnershipCTA() {
             </h2>
 
             <p className="text-gray-400 text-lg max-w-2xl font-light leading-relaxed">
-              Whether you need insurance brokerage, sales representation, market activation, or trained personnel — MHLOPHE HOLDINGS LEGAL SERVICES is built to move fast and perform consistently.
+              Whether you need insurance brokerage, sales representation, market activation, or trained personnel — MH LEGAL SERVICES Pty Ltd is built to move fast and perform consistently.
             </p>
 
             <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center">

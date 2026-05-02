@@ -33,8 +33,8 @@ export default function Login() {
       <div className="border-b border-zinc-900 px-8 py-5 flex items-center justify-between">
         <Link href="/">
           <div className="font-serif font-bold text-lg tracking-wider cursor-pointer flex items-center gap-1">
-            <span className="text-white">MHLOPHE HOLDINGS</span>
-            <span className="text-accent ml-1">LEGAL</span>
+            <span className="text-white">MH LEGAL</span>
+            <span className="text-accent ml-1">SERVICES</span>
           </div>
         </Link>
         <Link href="/">
@@ -62,7 +62,7 @@ export default function Login() {
               <span className="text-zinc-600 font-light italic">Authorised Access Only.</span>
             </h2>
             <p className="text-zinc-500 leading-relaxed">
-              Access is restricted to the four authorised managers of MH Legal Services Pty Ltd. All login activity is monitored, logged, and reported.
+              Access is restricted to the four authorised managers of MH LEGAL SERVICES Pty Ltd. All login activity is monitored, logged, and reported.
             </p>
           </div>
 

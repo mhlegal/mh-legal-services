@@ -8,7 +8,7 @@ import { SiteLayout } from "@/components/layout/SiteLayout";
 
 export default function Home() {
   useSeo({
-    title: "MHLOPHE HOLDINGS LEGAL SERVICES | Corporate Insurance Brokerage",
+    title: "MH LEGAL SERVICES Pty Ltd | Corporate Insurance Brokerage",
     description: "A South African corporate insurance brokerage with 100+ agents. Product distribution, market activation, sales representation, agent training, in-service training, and compliance management."
   });
 

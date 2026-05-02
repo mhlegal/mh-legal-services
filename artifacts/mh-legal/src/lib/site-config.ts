@@ -1,5 +1,5 @@
 export const siteConfig = {
-  name: "MHLOPHE HOLDINGS LEGAL SERVICES",
+  name: "MH LEGAL SERVICES Pty Ltd",
   shortName: "MHLS",
   tagline: "We Build Systems. We Develop People.",
   description: "A corporate insurance brokerage operating across South Africa with a network of 100+ agents. We distribute products, activate markets, and develop the next generation of sales and compliance professionals.",

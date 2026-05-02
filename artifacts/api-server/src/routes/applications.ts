@@ -37,6 +37,7 @@ router.post("/applications", async (req, res) => {
     email,
     stipendStatus,
     province,
+    willingToRelocate,
     trainingLetterPath,
   } = req.body as {
     fullNames: string;
@@ -45,6 +46,7 @@ router.post("/applications", async (req, res) => {
     email: string;
     stipendStatus: boolean;
     province: string;
+    willingToRelocate: boolean;
     trainingLetterPath?: string;
   };
 
@@ -56,10 +58,10 @@ router.post("/applications", async (req, res) => {
   try {
     const result = await query(
       `INSERT INTO student_applications
-        (full_names, sa_id_number, physical_address, email, stipend_status, province, training_letter_path)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
+        (full_names, sa_id_number, physical_address, email, stipend_status, province, willing_to_relocate, training_letter_path)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING id`,
-      [fullNames, saIdNumber, physicalAddress, email, stipendStatus, province, trainingLetterPath ?? null]
+      [fullNames, saIdNumber, physicalAddress, email, stipendStatus, province, willingToRelocate ?? false, trainingLetterPath ?? null]
     );
 
     const id = result.rows[0].id;
@@ -70,6 +72,7 @@ router.post("/applications", async (req, res) => {
       email,
       province,
       stipendStatus,
+      willingToRelocate: willingToRelocate ?? false,
       trainingLetterPath,
     }).catch((err) => logger.error({ err }, "Failed to send application notification"));
 

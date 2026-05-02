@@ -32,6 +32,7 @@ const formSchema = z.object({
   homeAddress: z.string().min(5, "Please enter your home address."),
   phone: z.string().min(10, "Please enter a valid phone number."),
   email: z.string().email("Please enter a valid email address."),
+  willingToRelocate: z.enum(["yes", "no"], { required_error: "Please indicate if you are willing to relocate." }),
   aboutYou: z.string().min(10, "Please tell us a little about yourself.")
     .refine((val) => wordCount(val) <= WORD_LIMIT, { message: `Maximum ${WORD_LIMIT} words allowed.` }),
 });
@@ -55,6 +56,7 @@ export default function Careers() {
       homeAddress: "",
       phone: "",
       email: "",
+      willingToRelocate: undefined,
       aboutYou: "",
     },
   });
@@ -68,7 +70,8 @@ export default function Careers() {
       `ID Number: ${values.idNumber}\n` +
       `Home Address: ${values.homeAddress}\n` +
       `Phone: ${values.phone}\n` +
-      `Email: ${values.email}\n\n` +
+      `Email: ${values.email}\n` +
+      `Willing to Relocate: ${values.willingToRelocate === "yes" ? "Yes" : "No"}\n\n` +
       `About the Applicant:\n${values.aboutYou}\n\n` +
       (fileName ? `Training Letter Attached: ${fileName}\n` : `No training letter file attached via form — applicant should attach separately.\n`) +
       `\n--- Submitted via MH LEGAL SERVICES Pty Ltd website ---`
@@ -276,6 +279,38 @@ export default function Careers() {
                       )}
                     />
                   </div>
+
+                  <FormField
+                    control={form.control}
+                    name="willingToRelocate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="uppercase text-xs tracking-wider text-black font-bold">Willing to Relocate? *</FormLabel>
+                        <FormControl>
+                          <div className="grid grid-cols-2 gap-4 mt-1">
+                            {[
+                              { label: "Yes — Open to relocation", value: "yes" },
+                              { label: "No — Not willing to relocate", value: "no" },
+                            ].map(({ label, value }) => (
+                              <button
+                                key={value}
+                                type="button"
+                                onClick={() => field.onChange(value)}
+                                className={`py-3 px-4 border text-sm font-semibold transition-all uppercase tracking-wider ${
+                                  field.value === value
+                                    ? "bg-accent border-accent text-black"
+                                    : "border-zinc-300 text-zinc-400 hover:border-zinc-500"
+                                }`}
+                              >
+                                {label}
+                              </button>
+                            ))}
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
                   {/* File Upload */}
                   <div>

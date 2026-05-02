@@ -25,6 +25,7 @@ export default function StudentPortal() {
     physicalAddress: "",
     email: "",
     stipendStatus: false,
+    willingToRelocate: false,
     province: "",
   });
 
@@ -118,7 +119,7 @@ export default function StudentPortal() {
               <button
                 onClick={() => {
                   setSubmitted(false);
-                  setForm({ fullNames: "", saIdNumber: "", physicalAddress: "", email: "", stipendStatus: false, province: "" });
+                  setForm({ fullNames: "", saIdNumber: "", physicalAddress: "", email: "", stipendStatus: false, willingToRelocate: false, province: "" });
                   setSelectedFile(null);
                 }}
                 className="flex items-center gap-3 border border-white/20 text-white px-8 py-3 hover:border-accent hover:text-accent transition-colors text-sm uppercase tracking-wider font-semibold"
@@ -282,6 +283,32 @@ export default function StudentPortal() {
                       onClick={() => update("stipendStatus", value)}
                       className={`py-3 px-4 border text-sm font-semibold transition-all uppercase tracking-wider ${
                         form.stipendStatus === value
+                          ? "bg-accent border-accent text-black"
+                          : "border-zinc-200 text-zinc-400 hover:border-zinc-400"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Willing to Relocate */}
+              <div className="mb-8">
+                <label className="block text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-3">
+                  Willing to Relocate <span className="text-red-500">*</span>
+                </label>
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    { label: "Yes — Open to relocation", value: true },
+                    { label: "No — Not willing to relocate", value: false },
+                  ].map(({ label, value }) => (
+                    <button
+                      key={String(value)}
+                      type="button"
+                      onClick={() => update("willingToRelocate", value)}
+                      className={`py-3 px-4 border text-sm font-semibold transition-all uppercase tracking-wider ${
+                        form.willingToRelocate === value
                           ? "bg-accent border-accent text-black"
                           : "border-zinc-200 text-zinc-400 hover:border-zinc-400"
                       }`}

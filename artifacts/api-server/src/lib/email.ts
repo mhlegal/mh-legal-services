@@ -54,6 +54,7 @@ export async function sendApplicationNotification(application: {
   email: string;
   province: string;
   stipendStatus: boolean;
+  willingToRelocate: boolean;
   trainingLetterPath?: string;
 }) {
   const html = `
@@ -68,8 +69,9 @@ export async function sendApplicationNotification(application: {
         <tr style="background:#1a1a1a;"><td style="padding:10px;color:#888;">Email</td><td style="padding:10px;color:#fff;">${application.email}</td></tr>
         <tr><td style="padding:10px;color:#888;">Province</td><td style="padding:10px;color:#fff;">${application.province || "Not specified"}</td></tr>
         <tr style="background:#1a1a1a;"><td style="padding:10px;color:#888;">Stipend Status</td><td style="padding:10px;color:#C9A961;font-weight:bold;">${application.stipendStatus ? "YES — Stipend Requested" : "NO — No Stipend"}</td></tr>
-        <tr><td style="padding:10px;color:#888;">Training Letter</td><td style="padding:10px;color:#fff;">${application.trainingLetterPath ? "Uploaded ✓" : "Not provided"}</td></tr>
-        <tr style="background:#1a1a1a;"><td style="padding:10px;color:#888;">Submitted At</td><td style="padding:10px;color:#fff;">${new Date().toLocaleString("en-ZA")}</td></tr>
+        <tr><td style="padding:10px;color:#888;">Willing to Relocate</td><td style="padding:10px;color:#C9A961;font-weight:bold;">${application.willingToRelocate ? "YES — Open to Relocation" : "NO — Not Willing to Relocate"}</td></tr>
+        <tr style="background:#1a1a1a;"><td style="padding:10px;color:#888;">Training Letter</td><td style="padding:10px;color:#fff;">${application.trainingLetterPath ? "Uploaded ✓" : "Not provided"}</td></tr>
+        <tr><td style="padding:10px;color:#888;">Submitted At</td><td style="padding:10px;color:#fff;">${new Date().toLocaleString("en-ZA")}</td></tr>
       </table>
       <p style="color:#888;font-size:13px;margin-top:24px;">Log in to the Admin Dashboard to review this application.</p>
     </div>

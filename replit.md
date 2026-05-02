@@ -30,21 +30,71 @@ See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and pa
 
 ### `artifacts/mh-legal` (web — React + Vite, slug `/`)
 
-Marketing website for **MHLOPHE HOLDINGS LEGAL SERVICES**, a South African corporate insurance brokerage.
+Full-stack Legal Tech Platform for **MH LEGAL SERVICES Pty Ltd** / **MHLOPHE HOLDINGS LEGAL SERVICES**.
 
+- **Brand name**: MHLOPHE HOLDINGS LEGAL SERVICES. Never abbreviate to "MH LEGAL" in copy.
 - **Tagline**: "We Build Systems. We Develop People."
-- **Brand name**: MHLOPHE HOLDINGS LEGAL SERVICES (full). Never abbreviate to "MH LEGAL" in copy.
-- **Positioning**: Corporate insurance brokerage with 100+ licensed agents across KwaZulu-Natal. Six service lines: Product Distribution, Market Activation, Sales Representation, Agent Training, In-Service Training, Compliance Management. Partnership with Mthashana TVET College for in-service placements. Tone: professional, high-energy, growth-oriented.
-- **Team**:
-  - Philani Mbooi — MD & Founder
-  - Thulane David Phiri — Head of Operations
-  - Simangaliso Ngobese — Provincial Manager
-  - Field Managers: Bongisipho Mfusi, Khulekani Gumede, Nqobile Miya, Sbongimpilo Miya, Ncamisile Lusenga
-- **Contact emails**: company=mhlopheholdings@gmail.com, provincial=ngobesesimangaliso47@gmail.com, fieldManager=Bongisiphoandile2@gmail.com, headOfField=phirid871@gmail.com
-- **WhatsApp**: +27 73 785 3867
-- **Pages**: Home, About Us, Services, Team, Careers, Contact Us (routes: /, /about, /services, /team, /careers, /contact)
-- **Careers page**: In-Service Training form (Full Names, ID, Address, Phone, Email, Training Letter upload, 150-word bio). On submit → opens mailto to ngobesesimangaliso47@gmail.com with form data prefilled. Also has Youth Employment section (ages 18–30, email CV).
-- **Contact page**: Email selector — user picks from 4 recipients (company, provincial manager, field manager, head of operations) → opens mailto link.
-- **Visual system**: Black / White / Gold (`#C9A961` accent). Playfair Display serif headings, Inter body. Framer-motion reveals. Do not introduce new colors.
-- **Copy rules**: No Lorem Ipsum, no emojis, no placeholder content. All copy is real B2B prose.
-- **Stack note**: Frontend-only React + Vite (wouter, framer-motion, lucide-react, react-hook-form + zod, shadcn/ui). No backend email — all contact/form actions use mailto links.
+- **Visual system**: Black / White / Gold (`#C9A961`). Playfair Display headings, Inter body. Framer-motion reveals. No new colors.
+
+#### Pages & Routes
+| Route | Page | Notes |
+|---|---|---|
+| `/` | Home | Marketing hero, services grid |
+| `/about` | About Us | Company story, TVET partnership |
+| `/services` | Services | Insurance brokerage services |
+| `/legal-services` | Legal Services Catalog | 5 service cards with call buttons & lead enquiry modal |
+| `/team` | Team | Leadership + field managers |
+| `/careers` | Careers | In-service training (mailto form) + youth employment |
+| `/student-portal` | Student HR Portal | Full-stack form → PostgreSQL + Object Storage + dual-email |
+| `/contact` | Contact Us | 4-recipient email selector |
+| `/login` | Manager Login | Session-based auth, 4 authorized emails |
+| `/admin` | Admin Dashboard | Protected, filters by province + stipend, CSV export |
+
+#### Auth System
+- **4 authorized emails**: ngobesesimangaliso47@gmail.com (Master Admin/Super-User), mhlopheholdings@gmail.com, phirid871@gmail.com, bongisiphoandile2@gmail.com
+- **Single shared password**: `ADMIN_PASSWORD` secret
+- **Master Gatekeeper**: When any of the 3 non-master emails log in, a security alert email is sent to ngobesesimangaliso47@gmail.com
+- Sessions stored in PostgreSQL via `connect-pg-simple`, 8-hour TTL
+
+#### Dual-Notification System
+- Every student application → email sent to BOTH ngobesesimangaliso47@gmail.com AND mhlopheholdings@gmail.com simultaneously
+- Every client lead enquiry → same dual notification
+- Sent via Gmail SMTP (nodemailer), credentials in `SMTP_USER` + `SMTP_PASS` secrets
+
+#### Legal Services Catalog (`/legal-services`)
+- 5 service cards: R200k Legal Cover, CCMA/Labour Law, Contract Drafting, Debt Collection (R15k+), Civil Rights
+- Direct call buttons: +27 31 002 7797 (Durban HQ), 087 006 0205 (National)
+- "Enquire" button opens lead modal → POSTs to `/api/leads` → triggers dual notification
+
+#### Student HR Portal (`/student-portal`)
+- Fields: Full Names, SA ID Number, Physical Address, Email, Province, Stipend Status (Yes/No)
+- File upload: In-Service Training Letter → presigned PUT URL → Replit Object Storage (GCS)
+- On submit: saves to PostgreSQL `student_applications` table + sends dual notification email
+
+#### Admin Dashboard (`/admin`)
+- Protected route (requires login)
+- Stats: Total, With Stipend, No Stipend, Letter Uploaded
+- Filters: Province (dropdown), Stipend Status (dropdown)
+- Default view: grouped by Province
+- Expandable rows with full detail + letter download link
+- CSV export button
+- Master Admin badge shown for ngobesesimangaliso47@gmail.com
+
+#### Contact
+- Phones: +27 31 002 7797 (Durban HQ), 087 006 0205 (National), +27 73 785 3867 (WhatsApp)
+- Emails: company=mhlopheholdings@gmail.com, provincial=ngobesesimangaliso47@gmail.com, fieldManager=Bongisiphoandile2@gmail.com, headOfField=phirid871@gmail.com
+
+### `artifacts/api-server` (API — Express 5, slug `/api`)
+
+- **Auth routes**: `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me`
+- **Application routes**: `POST /api/applications/upload-url`, `POST /api/applications`, `GET /api/applications`, `GET /api/applications/:id`, `GET /api/applications/:id/letter`
+- **Lead route**: `POST /api/leads`
+- **Session**: express-session + connect-pg-simple (table: `session`)
+- **Email**: nodemailer with Gmail SMTP (`SMTP_USER`, `SMTP_PASS`)
+- **Storage**: @google-cloud/storage presigned PUT URLs (`DEFAULT_OBJECT_STORAGE_BUCKET_ID`)
+- **DB**: raw `pg` Pool (`DATABASE_URL`)
+
+#### Database Tables
+- `student_applications` — id, full_names, sa_id_number, physical_address, email, stipend_status, province, training_letter_path, created_at
+- `audit_log` — id, admin_email, action, ip_address, created_at
+- `session` — sid, sess, expire (managed by connect-pg-simple)

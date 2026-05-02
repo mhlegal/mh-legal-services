@@ -32,6 +32,22 @@ export function Footer() {
                 </Link>
               </li>
             ))}
+            <li>
+              <Link href="/student-portal">
+                <div className="text-gray-400 hover:text-accent transition-colors flex items-center gap-2 cursor-pointer group">
+                  <ArrowRight size={14} className="text-accent opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all" />
+                  Student HR Portal
+                </div>
+              </Link>
+            </li>
+            <li>
+              <Link href="/login">
+                <div className="text-gray-400 hover:text-accent transition-colors flex items-center gap-2 cursor-pointer group">
+                  <ArrowRight size={14} className="text-accent opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all" />
+                  Manager Login
+                </div>
+              </Link>
+            </li>
           </ul>
         </div>
 
@@ -45,9 +61,21 @@ export function Footer() {
               </a>
             </li>
             <li>
+              <a href="tel:+27310027797" className="text-gray-400 hover:text-white transition-colors flex items-start gap-3">
+                <Phone size={18} className="text-accent mt-0.5 shrink-0" />
+                <span>+27 31 002 7797 (Durban HQ)</span>
+              </a>
+            </li>
+            <li>
+              <a href="tel:0870060205" className="text-gray-400 hover:text-white transition-colors flex items-start gap-3">
+                <Phone size={18} className="text-accent mt-0.5 shrink-0" />
+                <span>087 006 0205 (National)</span>
+              </a>
+            </li>
+            <li>
               <a href={siteConfig.contact.whatsappUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors flex items-start gap-3">
                 <Phone size={18} className="text-accent mt-0.5 shrink-0" />
-                <span>{siteConfig.contact.whatsapp}</span>
+                <span>{siteConfig.contact.whatsapp} (WhatsApp)</span>
               </a>
             </li>
             <li className="flex items-start gap-3 text-gray-400">

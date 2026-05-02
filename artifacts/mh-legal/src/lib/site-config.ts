@@ -31,10 +31,17 @@ export const siteConfig = {
     { name: "Home", path: "/" },
     { name: "About Us", path: "/about" },
     { name: "Services", path: "/services" },
+    { name: "Legal Services", path: "/legal-services" },
     { name: "Team", path: "/team" },
     { name: "Careers", path: "/careers" },
     { name: "Contact Us", path: "/contact" }
-  ]
+  ],
+  phones: {
+    durbanHQ: "+27310027797",
+    national: "0870060205",
+    durbanDisplay: "+27 31 002 7797",
+    nationalDisplay: "087 006 0205",
+  }
 };
 
 export type SiteConfig = typeof siteConfig;

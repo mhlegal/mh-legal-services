@@ -1,7 +1,7 @@
 export const siteConfig = {
   name: "MH LEGAL SERVICES Pty Ltd",
   shortName: "MHLS",
-  tagline: "We Build Systems. We Develop People.",
+  tagline: "Altimate Chance To Freedom...",
   description: "A corporate insurance brokerage operating across South Africa with a network of 100+ agents. We distribute products, activate markets, and develop the next generation of sales and compliance professionals.",
   url: "https://mhlopheholdings.co.za",
   team: {

@@ -27,9 +27,12 @@ export function Navbar() {
     >
       <div className="container mx-auto px-4 md:px-8 flex items-center justify-between">
         <Link href="/">
-          <div className="font-serif font-bold text-lg md:text-xl tracking-wider cursor-pointer flex items-center gap-1 leading-tight">
-            <span className="text-white">MH LEGAL</span>
-            <span className="text-accent ml-1">SERVICES</span>
+          <div className="cursor-pointer flex items-center">
+            <img
+              src={`${import.meta.env.BASE_URL}logo.png`}
+              alt="MH Legal Services"
+              className="h-12 md:h-14 w-auto object-contain"
+            />
           </div>
         </Link>
 

@@ -1,7 +1,6 @@
 // When deployed separately (e.g. frontend on Vercel, backend on Replit),
 // set VITE_API_URL to the full backend origin, e.g. "https://your-app.replit.app".
 // When unset (default — same-origin Replit deploy), API calls use the local /api path.
-// updated: 2026-05-03
 const API_ORIGIN = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
 const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, "");
 const BASE = API_ORIGIN || BASE_PATH;

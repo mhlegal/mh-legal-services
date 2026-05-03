@@ -115,7 +115,7 @@ export default function Careers() {
             transition={{ delay: 0.2 }}
             className="mt-8 text-xl text-gray-400 max-w-2xl font-light leading-relaxed"
           >
-            Two pathways into MH LEGAL SERVICES Pty Ltd — an in-service training placement for Business Management students, and a youth employment opportunity for candidates aged 18–30.
+            Two pathways into MH LEGAL SERVICES Pty Ltd — an in-service training placement for Business Management students, and a youth employment opportunity for candidates aged 18–30. Our agents operate across all 9 provinces, so we welcome applicants from anywhere in South Africa.
           </motion.p>
         </div>
       </section>
@@ -161,7 +161,7 @@ export default function Careers() {
                 <ul className="space-y-3">
                   {[
                     "Participate in live product distribution and client-facing sales activity",
-                    "Work alongside field managers and senior agents in the KZN market",
+                    "Work alongside field managers and senior agents across South Africa's 9 provinces",
                     "Learn FSCA compliance requirements in a regulated brokerage environment",
                     "Develop sales and client relationship skills under active mentorship",
                     "Contribute to market activation campaigns and pipeline reporting",
@@ -286,6 +286,7 @@ export default function Careers() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="uppercase text-xs tracking-wider text-black font-bold">Willing to Relocate? *</FormLabel>
+                        <p className="text-xs text-gray-500 mb-2">Our agents work across all 9 provinces of South Africa. Indicate whether you are open to being placed outside your current province.</p>
                         <FormControl>
                           <div className="grid grid-cols-2 gap-4 mt-1">
                             {[

@@ -82,7 +82,7 @@ export default function About() {
             </div>
             <div className="lg:col-span-7 space-y-6 text-gray-600 leading-relaxed text-base">
               <p>
-                MH LEGAL SERVICES Pty Ltd is a corporate insurance brokerage operating primarily across KwaZulu-Natal, with a licensed agent network that extends the firm's reach into communities and markets that traditional brokerage operations rarely serve.
+                MH LEGAL SERVICES Pty Ltd is a corporate insurance brokerage with a licensed agent network operating across all 9 provinces of South Africa. Our agents are deployed in every province, extending the firm's reach into communities and markets that traditional brokerage operations rarely serve.
               </p>
               <p>
                 Our business is built on six service lines — Product Distribution, Market Activation, Sales Representation, Agent Training, In-Service Training, and Compliance Management. Each line supports the others. Trained agents distribute products. Market activation generates new pipeline. Compliance management keeps the entire operation above board.
@@ -136,7 +136,7 @@ export default function About() {
               {[
                 { icon: <Users className="w-5 h-5 text-accent" />, title: "Real Teams, Real Work", desc: "Students join active sales and brokerage teams — not simulations. Every day is a live commercial operation." },
                 { icon: <Award className="w-5 h-5 text-accent" />, title: "Structured Learning Pathway", desc: "A defined progression from orientation through to field work, guided by experienced field managers and operations leads." },
-                { icon: <MapPin className="w-5 h-5 text-accent" />, title: "KwaZulu-Natal Based", desc: "Our primary operations are in KZN, giving students regional market exposure with direct mentorship from senior agents." },
+                { icon: <MapPin className="w-5 h-5 text-accent" />, title: "Nationwide Operations", desc: "Our agents operate across all 9 provinces of South Africa, giving trainees broad market exposure with direct mentorship from senior field agents." },
               ].map((item, i) => (
                 <div key={i} className="flex items-start gap-4 bg-white border border-zinc-100 p-6">
                   <div className="mt-0.5 shrink-0">{item.icon}</div>

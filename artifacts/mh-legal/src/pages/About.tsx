@@ -43,7 +43,7 @@ export default function About() {
             transition={{ delay: 0.2 }}
             className="mt-8 text-xl text-gray-400 max-w-2xl font-light leading-relaxed"
           >
-            MH LEGAL SERVICES Pty Ltd operates a network of 100+ licensed agents across South Africa. We distribute products, activate markets, develop talent, and build the compliance infrastructure that holds it all together.
+            Headquartered in Durban, MH LEGAL SERVICES Pty Ltd operates a network of 100+ licensed agents across all 9 provinces of South Africa. We distribute products, activate markets, develop talent, and build the compliance infrastructure that holds it all together.
           </motion.p>
         </div>
       </section>
@@ -82,7 +82,7 @@ export default function About() {
             </div>
             <div className="lg:col-span-7 space-y-6 text-gray-600 leading-relaxed text-base">
               <p>
-                MH LEGAL SERVICES Pty Ltd is a corporate insurance brokerage with a licensed agent network operating across all 9 provinces of South Africa. Our agents are deployed in every province, extending the firm's reach into communities and markets that traditional brokerage operations rarely serve.
+                MH LEGAL SERVICES Pty Ltd is a corporate insurance brokerage headquartered in Durban, KwaZulu-Natal, with a licensed agent network operating across all 9 provinces of South Africa. Our agents are deployed in every province, extending the firm's reach into communities and markets that traditional brokerage operations rarely serve.
               </p>
               <p>
                 Our business is built on six service lines — Product Distribution, Market Activation, Sales Representation, Agent Training, In-Service Training, and Compliance Management. Each line supports the others. Trained agents distribute products. Market activation generates new pipeline. Compliance management keeps the entire operation above board.

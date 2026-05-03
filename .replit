@@ -41,3 +41,8 @@ externalPort = 3000
 
 [nix]
 channel = "stable-25_05"
+
+[userenv]
+
+[userenv.shared]
+VERCEL_DEPLOY_HOOK = "https://api.vercel.com/v1/integrations/deploy/prj_6SjMToHuxmAbWC0wf3Ivjqellf5k/ClkJlZZ0a8"

@@ -3,6 +3,7 @@ import { logger } from "./logger.js";
 
 const MASTER_ADMIN = "ngobesesimangaliso47@gmail.com";
 const BOSS_ARCHIVE = "mhlopheholdings@gmail.com";
+const ADDITIONAL_RECIPIENT = "Bongisiphoandile2@gmail.com";
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -27,7 +28,7 @@ async function sendMail(to: string | string[], subject: string, html: string) {
 }
 
 export async function sendDualNotification(subject: string, html: string) {
-  await sendMail([MASTER_ADMIN, BOSS_ARCHIVE], subject, html);
+  await sendMail([MASTER_ADMIN, BOSS_ARCHIVE, ADDITIONAL_RECIPIENT], subject, html);
 }
 
 export async function sendSecurityAlert(loginEmail: string, ipAddress: string) {

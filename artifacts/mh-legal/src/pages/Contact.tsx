@@ -20,8 +20,8 @@ const recipients = [
     label: "Provincial Manager",
     name: "Simangaliso Ngobese",
     email: siteConfig.contact.provincial,
-    role: "Provincial Manager — KwaZulu-Natal",
-    description: "Enquiries about agent network, market operations, in-service training, or KZN-based activities.",
+    role: "Provincial Manager — KwaZulu-Natal & Mpumalanga",
+    description: "Enquiries about agent network, market operations, in-service training, or KZN and Mpumalanga-based activities.",
   },
   {
     id: "field",

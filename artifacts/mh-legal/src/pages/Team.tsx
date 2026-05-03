@@ -86,7 +86,7 @@ export default function Team() {
                 )}
                 {idx === 2 && (
                   <p className="text-gray-600 text-sm leading-relaxed px-2">
-                    Simangaliso Ngobese leads provincial operations across KwaZulu-Natal, coordinating field managers, activating markets, and maintaining the performance standards that define the firm's agent network.
+                    Simangaliso Ngobese leads provincial operations across KwaZulu-Natal and Mpumalanga, coordinating field managers, activating markets, and maintaining the performance standards that define the firm's agent network.
                   </p>
                 )}
               </motion.div>

@@ -61,7 +61,14 @@ router.delete("/agent-reports/:id", requireAuth, async (req, res) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) { res.status(400).json({ error: "Invalid id" }); return; }
   try {
-    await query("DELETE FROM agent_reports WHERE id = $1", [id]);
+    const result = await query(
+      "DELETE FROM agent_reports WHERE id = $1 AND submitted_by = $2 RETURNING id",
+      [id, req.session.adminEmail]
+    );
+    if (result.rowCount === 0) {
+      res.status(403).json({ error: "Not authorised to delete this report" });
+      return;
+    }
     res.json({ success: true });
   } catch (err) {
     req.log.error({ err }, "Failed to delete agent report");

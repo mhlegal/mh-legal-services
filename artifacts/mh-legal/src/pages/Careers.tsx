@@ -2,89 +2,15 @@ import { useSeo } from "@/hooks/use-seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { motion } from "framer-motion";
 import { siteConfig } from "@/lib/site-config";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
-import { CheckCircle2, Mail, Upload } from "lucide-react";
-import { useRef, useState } from "react";
-
-const WORD_LIMIT = 150;
-
-function wordCount(str: string): number {
-  return str.trim() === "" ? 0 : str.trim().split(/\s+/).length;
-}
-
-const formSchema = z.object({
-  fullNames: z.string().min(3, "Please enter your full names."),
-  idNumber: z.string().length(13, "ID number must be 13 digits.").regex(/^\d+$/, "ID number must contain digits only."),
-  homeAddress: z.string().min(5, "Please enter your home address."),
-  phone: z.string().min(10, "Please enter a valid phone number."),
-  email: z.string().email("Please enter a valid email address."),
-  willingToRelocate: z.enum(["yes", "no"], { required_error: "Please indicate if you are willing to relocate." }),
-  aboutYou: z.string().min(10, "Please tell us a little about yourself.")
-    .refine((val) => wordCount(val) <= WORD_LIMIT, { message: `Maximum ${WORD_LIMIT} words allowed.` }),
-});
+import { CheckCircle2, Mail, ArrowRight } from "lucide-react";
+import { Link } from "wouter";
 
 export default function Careers() {
   useSeo({
     title: "Careers & Training | MH LEGAL SERVICES Pty Ltd",
     description: "Apply for In-Service Training at MH LEGAL SERVICES Pty Ltd. Embedded inside a live corporate insurance brokerage in partnership with Mthashana TVET College."
   });
-
-  const { toast } = useToast();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [fileName, setFileName] = useState<string>("");
-  const [wordCountVal, setWordCountVal] = useState(0);
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      fullNames: "",
-      idNumber: "",
-      homeAddress: "",
-      phone: "",
-      email: "",
-      willingToRelocate: undefined,
-      aboutYou: "",
-    },
-  });
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    const subject = encodeURIComponent("In-Service Training Application — MH LEGAL SERVICES Pty Ltd");
-    const body = encodeURIComponent(
-      `IN-SERVICE TRAINING APPLICATION\n` +
-      `================================\n\n` +
-      `Full Names: ${values.fullNames}\n` +
-      `ID Number: ${values.idNumber}\n` +
-      `Home Address: ${values.homeAddress}\n` +
-      `Phone: ${values.phone}\n` +
-      `Email: ${values.email}\n` +
-      `Willing to Relocate: ${values.willingToRelocate === "yes" ? "Yes" : "No"}\n\n` +
-      `About the Applicant:\n${values.aboutYou}\n\n` +
-      (fileName ? `Training Letter Attached: ${fileName}\n` : `No training letter file attached via form — applicant should attach separately.\n`) +
-      `\n--- Submitted via MH LEGAL SERVICES Pty Ltd website ---`
-    );
-    window.location.href = `mailto:${siteConfig.contact.provincial}?subject=${subject}&body=${body}`;
-    toast({
-      title: "Application Ready to Send",
-      description: "Your email client will open with the application pre-filled. Please attach your In-Service Training Letter and send.",
-    });
-    form.reset();
-    setFileName("");
-    setWordCountVal(0);
-  }
 
   return (
     <SiteLayout>
@@ -192,196 +118,32 @@ export default function Careers() {
         </div>
       </section>
 
-      {/* Application Form */}
+      {/* Apply CTA */}
       <section className="py-24 bg-zinc-50 border-b border-zinc-200" id="apply">
         <div className="container mx-auto px-4 md:px-8">
-          <div className="max-w-3xl mx-auto">
-            <div className="flex items-center gap-4 mb-4">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="flex items-center justify-center gap-4 mb-6">
               <div className="h-[1px] w-12 bg-accent" />
               <span className="text-accent uppercase tracking-widest text-sm font-semibold">Apply Now</span>
+              <div className="h-[1px] w-12 bg-accent" />
             </div>
-            <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">In-Service Training Application</h2>
-            <p className="text-gray-500 mb-10 leading-relaxed">
-              Complete the form below. On submission, your email client will open with all details pre-filled and addressed to our Provincial Manager. Please attach your In-Service Training Letter before sending.
+            <h2 className="text-3xl md:text-4xl font-serif font-bold mb-6">Ready to Apply?</h2>
+            <p className="text-gray-500 mb-10 leading-relaxed max-w-xl mx-auto">
+              Submit your In-Service Training application through our secure Student HR Portal. Have your SA ID number, physical address, and training letter ready before you start.
             </p>
-
-            <div className="bg-white border border-zinc-200 p-8 md:p-12">
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-7">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="fullNames"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="uppercase text-xs tracking-wider text-black font-bold">Full Names *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="e.g. Sipho Nkosi" className="h-12 rounded-none border-zinc-300 focus-visible:ring-accent bg-white" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="idNumber"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="uppercase text-xs tracking-wider text-black font-bold">ID Number *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="13-digit SA ID number" maxLength={13} className="h-12 rounded-none border-zinc-300 focus-visible:ring-accent bg-white" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <FormField
-                    control={form.control}
-                    name="homeAddress"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="uppercase text-xs tracking-wider text-black font-bold">Home Address *</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Street, Town, Province" className="h-12 rounded-none border-zinc-300 focus-visible:ring-accent bg-white" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="uppercase text-xs tracking-wider text-black font-bold">Phone Number *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="e.g. 082 000 0000" className="h-12 rounded-none border-zinc-300 focus-visible:ring-accent bg-white" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="uppercase text-xs tracking-wider text-black font-bold">Email Address *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="your@email.com" className="h-12 rounded-none border-zinc-300 focus-visible:ring-accent bg-white" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <FormField
-                    control={form.control}
-                    name="willingToRelocate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="uppercase text-xs tracking-wider text-black font-bold">Willing to Relocate? *</FormLabel>
-                        <p className="text-xs text-gray-500 mb-2">Our agents work across all 9 provinces of South Africa. Indicate whether you are open to being placed outside your current province.</p>
-                        <FormControl>
-                          <div className="grid grid-cols-2 gap-4 mt-1">
-                            {[
-                              { label: "Yes — Open to relocation", value: "yes" },
-                              { label: "No — Not willing to relocate", value: "no" },
-                            ].map(({ label, value }) => (
-                              <button
-                                key={value}
-                                type="button"
-                                onClick={() => field.onChange(value)}
-                                className={`py-3 px-4 border text-sm font-semibold transition-all uppercase tracking-wider ${
-                                  field.value === value
-                                    ? "bg-accent border-accent text-black"
-                                    : "border-zinc-300 text-zinc-400 hover:border-zinc-500"
-                                }`}
-                              >
-                                {label}
-                              </button>
-                            ))}
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* File Upload */}
-                  <div>
-                    <label className="block uppercase text-xs tracking-wider text-black font-bold mb-2">
-                      In-Service Training Letter (Upload)
-                    </label>
-                    <label
-                      htmlFor="training-letter-careers"
-                      className="w-full border-2 border-dashed border-zinc-300 hover:border-accent transition-colors p-6 flex flex-col items-center gap-3 cursor-pointer bg-zinc-50 hover:bg-white"
-                    >
-                      <Upload size={22} className="text-accent" />
-                      <span className="text-sm text-gray-600 font-medium">
-                        {fileName ? fileName : "Click to upload your training letter (PDF, Word, or image)"}
-                      </span>
-                      {!fileName && <span className="text-xs text-gray-400">You can also attach it directly when your email opens</span>}
-                      <input
-                        id="training-letter-careers"
-                        ref={fileInputRef}
-                        type="file"
-                        accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                        className="hidden"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          setFileName(file ? file.name : "");
-                        }}
-                      />
-                    </label>
-                  </div>
-
-                  <FormField
-                    control={form.control}
-                    name="aboutYou"
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="flex items-end justify-between mb-2">
-                          <FormLabel className="uppercase text-xs tracking-wider text-black font-bold">Tell Us About Yourself *</FormLabel>
-                          <span className={`text-xs font-semibold ${wordCountVal > WORD_LIMIT ? "text-red-500" : "text-gray-400"}`}>
-                            {wordCountVal} / {WORD_LIMIT} words
-                          </span>
-                        </div>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Tell us who you are, why you want to join MH LEGAL SERVICES Pty Ltd, and what you hope to gain from the in-service training programme. Maximum 150 words."
-                            className="min-h-[140px] rounded-none border-zinc-300 focus-visible:ring-accent bg-white resize-none"
-                            {...field}
-                            onChange={(e) => {
-                              field.onChange(e);
-                              setWordCountVal(wordCount(e.target.value));
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="pt-2">
-                    <Button
-                      type="submit"
-                      className="w-full md:w-auto bg-black text-white hover:bg-accent hover:text-black rounded-none h-14 px-12 text-base font-bold transition-colors"
-                    >
-                      Submit Application
-                    </Button>
-                    <p className="text-xs text-gray-400 mt-4">
-                      Your email client will open with all details pre-filled and addressed to our Provincial Manager (ngobesesimangaliso47@gmail.com). Please attach your training letter and hit send.
-                    </p>
-                  </div>
-                </form>
-              </Form>
-            </div>
+            <Button
+              asChild
+              size="lg"
+              className="bg-black text-white hover:bg-accent hover:text-black rounded-none h-14 px-12 text-base font-bold tracking-wide transition-all group"
+            >
+              <Link href="/student-portal">
+                Go to Application Portal
+                <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </Button>
+            <p className="text-xs text-gray-400 mt-6">
+              Applications are reviewed by our HR team within 3–5 working days. You will be contacted at the email address you provide.
+            </p>
           </div>
         </div>
       </section>

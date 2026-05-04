@@ -9,7 +9,7 @@ import { Link } from "wouter";
 export default function Careers() {
   useSeo({
     title: "Careers & Training | MH LEGAL SERVICES Pty Ltd",
-    description: "Apply for In-Service Training at MH LEGAL SERVICES Pty Ltd. Embedded inside a live corporate insurance brokerage in partnership with Mthashana TVET College."
+    description: "Apply for In-Service Training at MH LEGAL SERVICES Pty Ltd. We bridge education and employment — embedding Business Management students inside a live corporate brokerage with a monthly stipend."
   });
 
   return (
@@ -59,7 +59,7 @@ export default function Careers() {
                 Train Inside a Live Brokerage Operation.
               </h2>
               <p className="text-gray-600 leading-relaxed mb-6">
-                In partnership with Mthashana TVET College, we embed qualifying Business Management students directly inside our sales and brokerage teams. You are not placed in a classroom environment — you work alongside our agents, field managers, and sales leads in a real, high-performance commercial operation.
+                MH LEGAL SERVICES Pty Ltd is a bridge between education and employment. We are deeply accommodative of Business Management students from recognised TVET Colleges and tertiary institutions across South Africa — embedding qualifying candidates directly inside our active sales and brokerage teams, with a monthly stipend for the duration of their placement.
               </p>
               <p className="text-gray-600 leading-relaxed mb-10">
                 The program covers product distribution, market activation, sales representation, and compliance — giving you a comprehensive foundation in corporate brokerage operations. All training is structured, supervised, and tied directly to FSCA-regulated environments.
@@ -108,7 +108,7 @@ export default function Careers() {
                     <li>— Structured in-service placement in a live brokerage firm</li>
                     <li>— Direct mentorship from field managers and operations leadership</li>
                     <li>— Real commercial experience across six service lines</li>
-                    <li>— Partnership with Mthashana TVET College for academic alignment</li>
+                    <li>— Monthly stipend for the duration of your in-service placement</li>
                     <li>— A pathway to permanent placement for high performers</li>
                   </ul>
                 </div>

@@ -48,11 +48,11 @@ const services = [
   {
     icon: <BookOpen className="w-10 h-10" />,
     title: "In-Service Training",
-    description: "Business Management students from Mthashana TVET College are embedded directly in our sales and brokerage operations. They gain real commercial experience in a live, regulated environment — not a simulation. Applications open to qualifying students.",
+    description: "We are a bridge between education and employment. Business Management students from recognised TVET Colleges and institutions are embedded directly in our live sales and brokerage operations — with a monthly stipend and structured mentorship throughout their placement.",
     points: [
-      "In-partnership with Mthashana TVET College",
+      "Open to Business Management students from recognised institutions",
+      "Monthly stipend for the full duration of placement",
       "Embedded inside live sales and brokerage teams",
-      "Structured progression with field manager oversight",
     ]
   },
   {

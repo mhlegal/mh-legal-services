@@ -10,7 +10,7 @@ import { Users, Award, MapPin } from "lucide-react";
 export default function About() {
   useSeo({
     title: "About Us | MH LEGAL SERVICES Pty Ltd",
-    description: "MH LEGAL SERVICES Pty Ltd is a corporate insurance brokerage with 100+ agents across all 9 provinces of South Africa, in partnership with Mthashana TVET College for in-service training."
+    description: "MH LEGAL SERVICES Pty Ltd is a corporate insurance brokerage with 100+ agents across all 9 provinces of South Africa — bridging education and employment through structured in-service training with a stipend for Business Management students."
   });
 
   return (
@@ -55,7 +55,7 @@ export default function About() {
             {[
               { value: "100+", label: "Agents Nationwide" },
               { value: "6", label: "Service Lines" },
-              { value: "TVET", label: "College Partnership" },
+              { value: "TVET", label: "Student Placements" },
               { value: "9", label: "Provinces Covered" },
             ].map((s) => (
               <div key={s.label} className="text-center">
@@ -88,7 +88,7 @@ export default function About() {
                 Our business is built on six service lines — Product Distribution, Market Activation, Sales Representation, Agent Training, In-Service Training, and Compliance Management. Each line supports the others. Trained agents distribute products. Market activation generates new pipeline. Compliance management keeps the entire operation above board.
               </p>
               <p>
-                Through our partnership with <strong className="text-black">Mthashana TVET College</strong>, we provide Business Management students with a practical in-service training environment inside a live sales and brokerage operation. We don't simulate commercial work — we do commercial work, and our trainees are part of it from day one.
+                We operate as a <strong className="text-black">bridge between education and employment</strong>. Business Management students from recognised TVET Colleges and institutions are welcomed into our firm for structured in-service training — embedded inside live sales and brokerage teams, supported by a monthly stipend, and mentored by experienced field managers from day one.
               </p>
               <p>
                 Our mandate is straightforward: <strong className="text-black">We Build Systems. We Develop People.</strong> Every operational decision and every training placement is an expression of that commitment.
@@ -98,7 +98,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* Partnership: Mthashana TVET */}
+      {/* Education & Employment Bridge */}
       <section className="py-24 bg-zinc-50 border-t border-zinc-200">
         <div className="container mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -110,16 +110,16 @@ export default function About() {
             >
               <div className="flex items-center gap-4">
                 <div className="h-[1px] w-12 bg-accent" />
-                <span className="text-accent uppercase tracking-widest text-sm font-semibold">College Partnership</span>
+                <span className="text-accent uppercase tracking-widest text-sm font-semibold">Education Meets Employment</span>
               </div>
               <h2 className="text-3xl md:text-4xl font-serif font-bold leading-tight">
-                In Partnership with Mthashana TVET College
+                A Bridge Between the Classroom and the Commercial World.
               </h2>
               <p className="text-gray-600 leading-relaxed">
-                Our formal partnership with Mthashana TVET College ensures that Business Management students gain real in-service experience within a regulated, high-performance brokerage environment. Students are embedded in active sales teams, participate in agent operations, and graduate with practical commercial skills that classroom learning cannot replicate.
+                MH LEGAL SERVICES Pty Ltd actively welcomes Business Management students from recognised TVET Colleges and tertiary institutions across South Africa. We believe that the gap between academic training and real-world employment should not be a barrier — it should be a bridge, and we are that bridge.
               </p>
               <p className="text-gray-600 leading-relaxed">
-                The partnership reflects our belief that talent development and business growth are inseparable. When we invest in people, we invest in the long-term strength of the South African insurance sector.
+                Qualifying students are embedded inside our live sales and brokerage teams, supported by a monthly stipend for the full duration of their placement, and mentored by experienced field managers. You do not observe our operation — you become part of it.
               </p>
               <Button asChild className="bg-black text-white hover:bg-accent hover:text-black rounded-none h-12 px-8 font-bold transition-all">
                 <Link href="/careers">Apply for In-Service Training</Link>
@@ -134,9 +134,9 @@ export default function About() {
               className="space-y-4"
             >
               {[
-                { icon: <Users className="w-5 h-5 text-accent" />, title: "Real Teams, Real Work", desc: "Students join active sales and brokerage teams — not simulations. Every day is a live commercial operation." },
-                { icon: <Award className="w-5 h-5 text-accent" />, title: "Structured Learning Pathway", desc: "A defined progression from orientation through to field work, guided by experienced field managers and operations leads." },
-                { icon: <MapPin className="w-5 h-5 text-accent" />, title: "Nationwide Operations", desc: "Our agents operate across all 9 provinces of South Africa, giving trainees broad market exposure with direct mentorship from senior field agents." },
+                { icon: <Users className="w-5 h-5 text-accent" />, title: "Embedded in Live Teams", desc: "Students join active sales and brokerage teams — not simulations. Every day is a real commercial operation with real clients and real stakes." },
+                { icon: <Award className="w-5 h-5 text-accent" />, title: "Monthly Stipend Included", desc: "We provide a monthly stipend for the duration of the in-service placement — because your contribution has value from day one." },
+                { icon: <MapPin className="w-5 h-5 text-accent" />, title: "A Pathway to Employment", desc: "High-performing trainees are considered for permanent placement. For many, in-service training at MH LEGAL is where a career begins." },
               ].map((item, i) => (
                 <div key={i} className="flex items-start gap-4 bg-white border border-zinc-100 p-6">
                   <div className="mt-0.5 shrink-0">{item.icon}</div>
@@ -174,7 +174,7 @@ export default function About() {
               {
                 number: "03",
                 title: "Human Capital First",
-                desc: "The network of 100+ agents and our TVET training programme are proof: we grow the firm by growing the people inside it."
+                desc: "The network of 100+ agents and our in-service training programme are proof: we grow the firm by growing the people inside it."
               }
             ].map((p, idx) => (
               <motion.div

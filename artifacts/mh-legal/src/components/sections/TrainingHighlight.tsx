@@ -22,7 +22,7 @@ export function TrainingHighlight() {
               Growing the Next Generation of Business Leaders.
             </h2>
             <p className="text-lg text-gray-600 leading-relaxed font-light">
-              In partnership with Mthashana TVET College, we embed Business Management students directly inside our live sales and brokerage operations. Real clients, real products, real performance — and a career foundation that academic training alone cannot build.
+              MH LEGAL SERVICES Pty Ltd is a bridge between education and employment. We welcome Business Management students from recognised institutions across South Africa — embedding them inside our live sales and brokerage operations with a monthly stipend and a direct pathway into a professional career.
             </p>
             <div className="pt-4 flex flex-col sm:flex-row gap-4">
               <Button asChild size="lg" className="bg-black text-white hover:bg-accent hover:text-black rounded-none h-14 px-8 text-base font-semibold group transition-all">
@@ -63,7 +63,7 @@ export function TrainingHighlight() {
                 </div>
                 <div>
                   <div className="text-2xl font-serif font-bold text-accent">TVET</div>
-                  <div className="text-xs text-gray-500 uppercase tracking-widest mt-1">College Partnership</div>
+                  <div className="text-xs text-gray-500 uppercase tracking-widest mt-1">Student Placements</div>
                 </div>
               </div>
             </div>

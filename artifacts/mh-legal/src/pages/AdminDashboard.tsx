@@ -23,6 +23,7 @@ interface Application {
   id: number; full_names: string; sa_id_number: string;
   physical_address: string; email: string; stipend_status: boolean;
   province: string; training_letter_path: string | null; created_at: string;
+  status: "pending" | "approved" | "declined";
 }
 interface AgentReport {
   id: number; submitted_by: string; agent_count: number;
@@ -179,12 +180,17 @@ function ApplicationsTab() {
 
   const total = applications.length;
   const withStipend = applications.filter((a) => a.stipend_status).length;
-  const withLetter = applications.filter((a) => a.training_letter_path).length;
+  const approved = applications.filter((a) => a.status === "approved").length;
+  const declined = applications.filter((a) => a.status === "declined").length;
   const grouped = PROVINCES_FORM.reduce<Record<string, Application[]>>((acc, p) => {
     const items = applications.filter((a) => a.province === p);
     if (items.length > 0) acc[p] = items;
     return acc;
   }, {});
+
+  function handleStatusChange(id: number, status: "approved" | "declined") {
+    setApplications((prev) => prev.map((a) => a.id === id ? { ...a, status } : a));
+  }
 
   return (
     <>
@@ -194,9 +200,9 @@ function ApplicationsTab() {
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
         <StatCard label="Total Applications" value={total} icon={Users} accent />
-        <StatCard label="With Stipend" value={withStipend} icon={CheckCircle} />
-        <StatCard label="No Stipend" value={total - withStipend} icon={XCircle} />
-        <StatCard label="Letter Uploaded" value={withLetter} icon={FileText} />
+        <StatCard label="Approved" value={approved} icon={CheckCircle} />
+        <StatCard label="Declined" value={declined} icon={XCircle} />
+        <StatCard label="Pending Review" value={total - approved - declined} icon={FileText} />
       </div>
 
       <div className="flex items-center gap-4 mb-8 flex-wrap">
@@ -245,7 +251,9 @@ function ApplicationsTab() {
       ) : provinceFilter !== "all" ? (
         <div className="space-y-2">
           {applications.map((app) => (
-            <ApplicationRow key={app.id} app={app} expanded={expandedId === app.id} onToggle={() => setExpandedId(expandedId === app.id ? null : app.id)} />
+            <ApplicationRow key={app.id} app={app} expanded={expandedId === app.id}
+              onToggle={() => setExpandedId(expandedId === app.id ? null : app.id)}
+              onStatusChange={handleStatusChange} />
           ))}
         </div>
       ) : (
@@ -260,7 +268,9 @@ function ApplicationsTab() {
               </div>
               <div className="space-y-2">
                 {apps.map((app) => (
-                  <ApplicationRow key={app.id} app={app} expanded={expandedId === app.id} onToggle={() => setExpandedId(expandedId === app.id ? null : app.id)} />
+                  <ApplicationRow key={app.id} app={app} expanded={expandedId === app.id}
+                    onToggle={() => setExpandedId(expandedId === app.id ? null : app.id)}
+                    onStatusChange={handleStatusChange} />
                 ))}
               </div>
             </div>
@@ -271,17 +281,58 @@ function ApplicationsTab() {
   );
 }
 
-function ApplicationRow({ app, expanded, onToggle }: { app: Application; expanded: boolean; onToggle: () => void }) {
-  const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+function StatusBadge({ status }: { status: Application["status"] }) {
+  if (status === "approved") return (
+    <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 border border-green-700/50 text-green-400 bg-green-400/5">
+      Approved
+    </span>
+  );
+  if (status === "declined") return (
+    <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 border border-red-800/50 text-red-400 bg-red-400/5">
+      Declined
+    </span>
+  );
   return (
-    <div className="border border-zinc-900 hover:border-zinc-700 transition-colors">
+    <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 border border-zinc-700 text-zinc-500 bg-zinc-900/50">
+      Pending
+    </span>
+  );
+}
+
+function ApplicationRow({ app, expanded, onToggle, onStatusChange }: {
+  app: Application; expanded: boolean; onToggle: () => void;
+  onStatusChange: (id: number, status: "approved" | "declined") => void;
+}) {
+  const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+  const [actioning, setActioning] = useState<"approved" | "declined" | null>(null);
+  const [actionError, setActionError] = useState("");
+
+  async function handleDecision(status: "approved" | "declined") {
+    setActioning(status);
+    setActionError("");
+    try {
+      await apiJson(`/applications/${app.id}/status`, {
+        method: "PATCH",
+        body: JSON.stringify({ status }),
+      });
+      onStatusChange(app.id, status);
+    } catch {
+      setActionError("Failed to update status. Please try again.");
+    } finally {
+      setActioning(null);
+    }
+  }
+
+  return (
+    <div className={`border transition-colors ${app.status === "approved" ? "border-green-900/40" : app.status === "declined" ? "border-red-900/40" : "border-zinc-900 hover:border-zinc-700"}`}>
       <button onClick={onToggle} className="w-full flex items-center gap-6 px-6 py-4 text-left hover:bg-zinc-950 transition-colors">
         <span className="text-accent font-serif font-bold text-sm w-10 shrink-0">#{app.id}</span>
         <div className="flex-1 min-w-0">
           <p className="text-white font-semibold text-sm truncate">{app.full_names}</p>
           <p className="text-zinc-600 text-xs">{app.email}</p>
         </div>
-        <div className="flex items-center gap-4 shrink-0">
+        <div className="flex items-center gap-3 shrink-0">
+          <StatusBadge status={app.status} />
           <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 border ${app.stipend_status ? "border-accent/40 text-accent bg-accent/5" : "border-zinc-800 text-zinc-600"}`}>
             {app.stipend_status ? "Stipend" : "No Stipend"}
           </span>
@@ -291,7 +342,7 @@ function ApplicationRow({ app, expanded, onToggle }: { app: Application; expande
       </button>
       {expanded && (
         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} className="border-t border-zinc-900 px-6 py-6">
-          <div className="grid md:grid-cols-3 gap-6 text-sm">
+          <div className="grid md:grid-cols-3 gap-6 text-sm mb-6">
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-zinc-600 mb-2">SA ID Number</p>
               <p className="text-white font-mono">{app.sa_id_number}</p>
@@ -319,6 +370,50 @@ function ApplicationRow({ app, expanded, onToggle }: { app: Application; expande
                 <p className="text-zinc-700 text-xs uppercase tracking-wider">Not uploaded</p>
               )}
             </div>
+          </div>
+
+          {/* Decision actions */}
+          <div className="border-t border-zinc-800 pt-6">
+            <p className="text-xs font-semibold uppercase tracking-widest text-zinc-600 mb-4">Application Decision</p>
+            {app.status !== "pending" ? (
+              <div className="flex items-center gap-3">
+                <StatusBadge status={app.status} />
+                <span className="text-zinc-500 text-xs">
+                  {app.status === "approved"
+                    ? "Applicant has been notified — we will be in contact soon."
+                    : "Applicant has been notified of the outcome."}
+                </span>
+                {/* Allow re-decision */}
+                <button onClick={() => handleDecision(app.status === "approved" ? "declined" : "approved")}
+                  disabled={!!actioning}
+                  className="ml-auto text-[10px] font-semibold uppercase tracking-wider text-zinc-600 hover:text-zinc-400 underline underline-offset-2 transition-colors disabled:opacity-40">
+                  {actioning ? "Updating…" : `Change to ${app.status === "approved" ? "Declined" : "Approved"}`}
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3 flex-wrap">
+                <button
+                  onClick={() => handleDecision("approved")}
+                  disabled={!!actioning}
+                  className="flex items-center gap-2 bg-green-700 hover:bg-green-600 text-white text-xs uppercase tracking-wider font-bold px-5 py-2.5 transition-colors disabled:opacity-40">
+                  <CheckCircle className="w-3.5 h-3.5" />
+                  {actioning === "approved" ? "Approving…" : "Approve"}
+                </button>
+                <button
+                  onClick={() => handleDecision("declined")}
+                  disabled={!!actioning}
+                  className="flex items-center gap-2 border border-red-800 text-red-400 hover:bg-red-900/20 text-xs uppercase tracking-wider font-bold px-5 py-2.5 transition-colors disabled:opacity-40">
+                  <XCircle className="w-3.5 h-3.5" />
+                  {actioning === "declined" ? "Declining…" : "Decline"}
+                </button>
+                <span className="text-zinc-600 text-xs">Applicant will receive an email automatically.</span>
+              </div>
+            )}
+            {actionError && (
+              <p className="mt-3 text-red-400 text-xs flex items-center gap-2">
+                <AlertTriangle className="w-3.5 h-3.5" /> {actionError}
+              </p>
+            )}
           </div>
         </motion.div>
       )}

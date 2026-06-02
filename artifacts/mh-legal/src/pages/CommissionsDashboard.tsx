@@ -159,7 +159,9 @@ function CommissionsContent() {
       let data: any = {};
       try { data = JSON.parse(text); } catch { throw new Error(res.ok ? "Unexpected server response" : `Server error (${res.status})`); }
       if (!res.ok) throw new Error(data.error ?? `Upload failed (${res.status})`);
-      setUploadResult({ success: true, message: `Extracted ${data.entryCount} ${data.entryCount === 1 ? "entry" : "entries"} from "${file.name}".` });
+      const skipped = data.skippedCount ?? 0;
+      const skipNote = skipped > 0 ? ` ${skipped} duplicate ${skipped === 1 ? "policy" : "policies"} skipped.` : "";
+      setUploadResult({ success: true, message: `Extracted ${data.entryCount} new ${data.entryCount === 1 ? "entry" : "entries"} from "${file.name}".${skipNote}` });
       await fetchPeriods();
       await fetchSummary(selectedPeriodId);
     } catch (err: any) {

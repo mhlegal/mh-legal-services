@@ -142,17 +142,20 @@ function CommissionsContent() {
   useEffect(() => { fetchPeriods(); }, []);
   useEffect(() => { if (selectedPeriodId) fetchSummary(selectedPeriodId); }, [selectedPeriodId, fetchSummary]);
 
-  async function handleFile(file: File) {
+  const [uploadProgress, setUploadProgress] = useState<string>("");
+
+  async function handleFiles(incoming: FileList | File[]) {
+    const fileArr = Array.from(incoming).slice(0, 10);
     if (!selectedPeriodId) { setUploadResult({ success: false, message: "Please select or create a period first." }); return; }
     const period = periods.find(p => p.id === selectedPeriodId);
     if (period?.status === "finalised") { setUploadResult({ success: false, message: "This period is finalised. Reopen it to add more entries." }); return; }
-    if (!file.type.startsWith("image/") && file.type !== "application/pdf") {
-      setUploadResult({ success: false, message: "Only PDF or image files are supported." }); return;
-    }
+    const invalid = fileArr.find(f => !f.type.startsWith("image/") && f.type !== "application/pdf");
+    if (invalid) { setUploadResult({ success: false, message: `"${invalid.name}" is not a supported file type. Use PDF, JPG, PNG or WEBP.` }); return; }
     setUploading(true); setUploadResult(null);
+    setUploadProgress(fileArr.length === 1 ? "Reading with AI…" : `Reading ${fileArr.length} files with AI…`);
     try {
       const formData = new FormData();
-      formData.append("file", file);
+      fileArr.forEach(f => formData.append("files", f));
       formData.append("period_id", String(selectedPeriodId));
       const res = await fetch(`${BASE}/api/commissions/upload`, { method: "POST", credentials: "include", body: formData });
       const text = await res.text();
@@ -160,13 +163,15 @@ function CommissionsContent() {
       try { data = JSON.parse(text); } catch { throw new Error(res.ok ? "Unexpected server response" : `Server error (${res.status})`); }
       if (!res.ok) throw new Error(data.error ?? `Upload failed (${res.status})`);
       const skipped = data.skippedCount ?? 0;
+      const fc = data.fileCount ?? fileArr.length;
+      const fileLabel = fc === 1 ? `"${fileArr[0].name}"` : `${fc} files`;
       const skipNote = skipped > 0 ? ` ${skipped} duplicate ${skipped === 1 ? "policy" : "policies"} skipped.` : "";
-      setUploadResult({ success: true, message: `Extracted ${data.entryCount} new ${data.entryCount === 1 ? "entry" : "entries"} from "${file.name}".${skipNote}` });
+      setUploadResult({ success: true, message: `Extracted ${data.entryCount} new ${data.entryCount === 1 ? "entry" : "entries"} from ${fileLabel}.${skipNote}` });
       await fetchPeriods();
       await fetchSummary(selectedPeriodId);
     } catch (err: any) {
       setUploadResult({ success: false, message: err.message ?? "Upload failed. Please try again." });
-    } finally { setUploading(false); }
+    } finally { setUploading(false); setUploadProgress(""); }
   }
 
   async function handleDelete(type: "entry" | "statement" | "period", id: number) {
@@ -356,22 +361,26 @@ function CommissionsContent() {
           <label
             onDragOver={e => { e.preventDefault(); setDragOver(true); }}
             onDragLeave={() => setDragOver(false)}
-            onDrop={e => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files[0]; if (f) handleFile(f); }}
+            onDrop={e => { e.preventDefault(); setDragOver(false); if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files); }}
             className={`relative flex flex-col items-center justify-center border-2 border-dashed py-10 px-8 cursor-pointer transition-colors ${dragOver ? "border-accent bg-accent/5" : "border-zinc-800 hover:border-zinc-600 bg-zinc-950"}`}
           >
-            <input type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,image/*,application/pdf" className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
-              onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ""; }} disabled={uploading} />
+            <input type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,image/*,application/pdf" multiple
+              className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+              onChange={e => { if (e.target.files?.length) handleFiles(e.target.files); e.target.value = ""; }}
+              disabled={uploading} />
             {uploading ? (
               <div className="flex flex-col items-center gap-3 pointer-events-none">
                 <Loader2 className="w-8 h-8 text-accent animate-spin" />
-                <p className="text-white font-semibold text-sm">Processing with AI…</p>
+                <p className="text-white font-semibold text-sm">{uploadProgress || "Processing with AI…"}</p>
                 <p className="text-zinc-500 text-xs">Extracting agents, policy numbers, clients and amounts</p>
               </div>
             ) : (
               <div className="flex flex-col items-center gap-3 text-center pointer-events-none">
                 <Upload className="w-8 h-8 text-zinc-600" />
-                <div><p className="text-white font-semibold text-sm mb-1">Drop statement here or click to browse</p>
-                  <p className="text-zinc-500 text-xs">PDF · JPG · PNG · WEBP</p></div>
+                <div>
+                  <p className="text-white font-semibold text-sm mb-1">Drop up to 10 images here or click to browse</p>
+                  <p className="text-zinc-500 text-xs">PDF · JPG · PNG · WEBP — select multiple files at once</p>
+                </div>
               </div>
             )}
           </label>

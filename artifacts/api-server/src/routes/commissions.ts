@@ -240,8 +240,8 @@ async function extractEntriesFromFile(
   return extractWithAI(`[PDF binary — extract any readable commission data]\n${hint}`);
 }
 
-router.post("/commissions/upload", requirePaymentsAuth, upload.array("files", 10), async (req, res) => {
-  const files = req.files as Express.Multer.File[] | undefined;
+router.post("/commissions/upload", requirePaymentsAuth, upload.any(), async (req, res) => {
+  const files = (req.files as Express.Multer.File[] | undefined)?.slice(0, 10);
   if (!files || files.length === 0) { res.status(400).json({ error: "No files provided" }); return; }
 
   const { period_id } = req.body;

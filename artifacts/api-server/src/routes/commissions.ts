@@ -212,24 +212,47 @@ router.delete("/commissions/periods/:id", requirePaymentsAuth, async (req, res) 
 
 // ─── UPLOAD ────────────────────────────────────────────────────────────────
 
-router.post("/commissions/upload", requirePaymentsAuth, upload.single("file"), async (req, res) => {
-  if (!req.file) { res.status(400).json({ error: "No file provided" }); return; }
-
-  const { mimetype, originalname, buffer } = req.file;
-  const { period_id } = req.body;
+async function extractEntriesFromFile(
+  buffer: Buffer,
+  mimetype: string,
+  originalname: string
+): Promise<Array<{ agent_name: string; policy_number: string; client_name: string; amount: number; sale_type?: string }>> {
   const isImage = mimetype.startsWith("image/");
-  const isPDF = mimetype === "application/pdf";
-
-  if (!isImage && !isPDF) {
-    res.status(400).json({ error: "Only PDF or image files are supported" });
-    return;
+  if (isImage) {
+    return extractWithAIFromImage(buffer, mimetype);
   }
+  let rawText = "";
+  try {
+    const pdfParse = require("pdf-parse");
+    const data = await pdfParse(buffer);
+    rawText = data.text ?? "";
+  } catch (err) {
+    logger.warn({ err, originalname }, "PDF text extraction failed");
+  }
+  if (rawText.trim().length > 50) {
+    return extractWithAI(rawText);
+  }
+  const hint = buffer.toString("latin1").slice(0, 4000).replace(/[\x00-\x1F\x7F-\x9F]/g, " ");
+  return extractWithAI(`[PDF binary — extract any readable commission data]\n${hint}`);
+}
+
+router.post("/commissions/upload", requirePaymentsAuth, upload.array("files", 10), async (req, res) => {
+  const files = req.files as Express.Multer.File[] | undefined;
+  if (!files || files.length === 0) { res.status(400).json({ error: "No files provided" }); return; }
+
+  const { period_id } = req.body;
   if (!period_id) {
     res.status(400).json({ error: "A period must be selected before uploading" });
     return;
   }
 
-  // Verify period exists
+  for (const f of files) {
+    if (!f.mimetype.startsWith("image/") && f.mimetype !== "application/pdf") {
+      res.status(400).json({ error: `Unsupported file type: ${f.originalname}` });
+      return;
+    }
+  }
+
   const periodCheck = await query("SELECT * FROM commission_periods WHERE id = $1", [period_id]);
   if (!periodCheck.rows[0]) { res.status(404).json({ error: "Period not found" }); return; }
   if (periodCheck.rows[0].status === "finalised") {
@@ -239,73 +262,69 @@ router.post("/commissions/upload", requirePaymentsAuth, upload.single("file"), a
   const period = periodCheck.rows[0];
 
   try {
-    let entries: Array<{ agent_name: string; policy_number: string; client_name: string; amount: number }> = [];
-
-    if (isImage) {
-      entries = await extractWithAIFromImage(buffer, mimetype);
-    } else {
-      let rawText = "";
-      try {
-        const pdfParse = require("pdf-parse");
-        const data = await pdfParse(buffer);
-        rawText = data.text ?? "";
-      } catch (err) {
-        logger.warn({ err }, "PDF text extraction failed");
-      }
-      if (rawText.trim().length > 50) {
-        entries = await extractWithAI(rawText);
-      } else {
-        const hint = buffer.toString("latin1").slice(0, 4000).replace(/[\x00-\x1F\x7F-\x9F]/g, " ");
-        entries = await extractWithAI(`[PDF binary — extract any readable commission data]\n${hint}`);
-      }
-    }
-
-    let filePath = `statements/${Date.now()}-${encodeURIComponent(originalname)}`;
-    try {
-      filePath = await objectStorage.uploadBuffer(originalname, mimetype, buffer);
-    } catch (err) {
-      logger.warn({ err }, "Object storage upload failed — using fallback path");
-    }
-
-    const stmtResult = await query(
-      `INSERT INTO commission_statements (uploaded_by, file_name, file_path, fortnight_start, fortnight_end, period_id)
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
-      [req.session.adminEmail, originalname, filePath, period.period_start, period.period_end, period_id]
-    );
-    const statementId = stmtResult.rows[0].id;
-
     const VALID_TYPES = ["reg26a", "private_order", "unknown"];
 
-    const policyNumbersToCheck = entries
+    // Process all files in parallel: extract entries + upload to storage
+    const fileResults = await Promise.all(files.map(async (file) => {
+      const [entries, filePath] = await Promise.all([
+        extractEntriesFromFile(file.buffer, file.mimetype, file.originalname).catch((err) => {
+          logger.warn({ err, file: file.originalname }, "AI extraction failed for file");
+          return [] as Array<{ agent_name: string; policy_number: string; client_name: string; amount: number; sale_type?: string }>;
+        }),
+        objectStorage.uploadBuffer(file.originalname, file.mimetype, file.buffer).catch((err) => {
+          logger.warn({ err }, "Object storage upload failed — using fallback path");
+          return `statements/${Date.now()}-${encodeURIComponent(file.originalname)}`;
+        }),
+      ]);
+
+      const stmtResult = await query(
+        `INSERT INTO commission_statements (uploaded_by, file_name, file_path, fortnight_start, fortnight_end, period_id)
+         VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+        [req.session.adminEmail, file.originalname, filePath, period.period_start, period.period_end, period_id]
+      );
+
+      return { statementId: stmtResult.rows[0].id as number, entries };
+    }));
+
+    // Flatten all entries with their statement IDs
+    const allEntries = fileResults.flatMap(({ statementId, entries }) =>
+      entries.map((e) => ({ ...e, statementId }))
+    );
+
+    // Collect all non-empty policy numbers from this batch for DB lookup
+    const batchPolicies = allEntries
       .map((e) => e.policy_number?.trim())
       .filter((p): p is string => !!p);
 
     let existingPolicies = new Set<string>();
-    if (policyNumbersToCheck.length > 0) {
-      const placeholders = policyNumbersToCheck.map((_, i) => `$${i + 1}`).join(", ");
+    if (batchPolicies.length > 0) {
+      const placeholders = batchPolicies.map((_, i) => `$${i + 1}`).join(", ");
       const existing = await query<{ policy_number: string }>(
         `SELECT policy_number FROM commission_entries WHERE policy_number IN (${placeholders})`,
-        policyNumbersToCheck
+        batchPolicies
       );
       existingPolicies = new Set(existing.rows.map((r) => r.policy_number));
     }
 
+    // Insert entries, deduplicating against DB and within the batch
+    const seenInBatch = new Set<string>();
     let entryCount = 0;
     let skippedCount = 0;
 
-    for (const entry of entries) {
+    for (const entry of allEntries) {
       if (!entry.agent_name) continue;
       const policyNum = entry.policy_number?.trim() || "";
-      if (policyNum && existingPolicies.has(policyNum)) {
+      if (policyNum && (existingPolicies.has(policyNum) || seenInBatch.has(policyNum))) {
         skippedCount++;
         continue;
       }
-      const saleType = VALID_TYPES.includes(entry.sale_type) ? entry.sale_type : "unknown";
+      if (policyNum) seenInBatch.add(policyNum);
+      const saleType = VALID_TYPES.includes(entry.sale_type ?? "") ? entry.sale_type! : "unknown";
       try {
         await query(
           `INSERT INTO commission_entries (statement_id, agent_name, policy_number, client_name, amount, sale_type, fortnight_start, fortnight_end)
            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-          [statementId, entry.agent_name, policyNum, entry.client_name || "", entry.amount || 0, saleType, period.period_start, period.period_end]
+          [entry.statementId, entry.agent_name, policyNum, entry.client_name || "", entry.amount || 0, saleType, period.period_start, period.period_end]
         );
         entryCount++;
       } catch (insertErr: any) {
@@ -317,11 +336,11 @@ router.post("/commissions/upload", requirePaymentsAuth, upload.single("file"), a
       }
     }
 
-    req.log.info({ statementId, entryCount, skippedCount, period_id }, "Commission statement uploaded");
-    res.json({ success: true, statementId, entryCount, skippedCount });
+    req.log.info({ fileCount: files.length, entryCount, skippedCount, period_id }, "Commission batch uploaded");
+    res.json({ success: true, entryCount, skippedCount, fileCount: files.length });
   } catch (err) {
-    req.log.error({ err }, "Failed to process commission statement");
-    res.status(500).json({ error: "Failed to process file" });
+    req.log.error({ err }, "Failed to process commission upload");
+    res.status(500).json({ error: "Failed to process files" });
   }
 });
 

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Upload, Shield, LogOut, Trash2, RefreshCw, AlertTriangle,
   CheckCircle, DollarSign, Users, FileText, Calendar, X,
-  Loader2, Plus, Edit2, Lock, Unlock, ChevronDown,
+  Loader2, Plus, Edit2, Lock, Unlock, ChevronDown, Search,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { apiJson, BASE } from "@/lib/api";
@@ -74,7 +74,8 @@ export default function CommissionsDashboard() {
             <div className="h-5 w-px bg-zinc-800" />
             <div className="flex items-center gap-3"><DollarSign className="w-4 h-4 text-accent" /><span className="text-xs font-semibold uppercase tracking-widest text-zinc-400">Commission Payments</span></div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <SearchButton />
             <Link href="/admin"><span className="text-zinc-600 text-xs uppercase tracking-wider hover:text-accent transition-colors cursor-pointer hidden sm:block">← Manager Dashboard</span></Link>
             <button onClick={async () => { await logout(); setLocation("/login"); }} className="flex items-center gap-2 border border-zinc-800 text-zinc-400 hover:border-white hover:text-white text-xs uppercase tracking-wider px-4 py-2 transition-colors font-semibold">
               <LogOut className="w-3.5 h-3.5" /> Logout
@@ -694,6 +695,181 @@ function PeriodModal({ editing, onClose, onSaved }: {
           <button onClick={onClose} className="flex-1 border border-zinc-700 text-zinc-400 hover:border-white hover:text-white text-xs uppercase tracking-wider font-bold px-4 py-3 transition-colors">Cancel</button>
         </div>
       </motion.div>
+    </motion.div>
+  );
+}
+
+// ─── Search ───────────────────────────────────────────────────────────────────
+
+interface SearchResult {
+  id: number; agent_name: string; policy_number: string; client_name: string;
+  amount: string; sale_type: "reg26a" | "private_order" | "unknown";
+  file_name: string; period_id: number; period_label: string;
+  period_start: string; period_end: string;
+  period_status: "active" | "finalised"; payment_date: string | null;
+  created_at: string;
+}
+
+function SearchButton() {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className="flex items-center gap-2 border border-zinc-800 text-zinc-400 hover:border-accent hover:text-accent text-xs uppercase tracking-wider px-3 py-2 transition-colors font-semibold"
+      >
+        <Search className="w-3.5 h-3.5" />
+        <span className="hidden sm:inline">Policy Search</span>
+      </button>
+      <AnimatePresence>
+        {open && <SearchModal onClose={() => setOpen(false)} />}
+      </AnimatePresence>
+    </>
+  );
+}
+
+function SearchModal({ onClose }: { onClose: () => void }) {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<SearchResult[] | null>(null);
+  const [searching, setSearching] = useState(false);
+  const [error, setError] = useState("");
+
+  async function doSearch(q: string) {
+    if (q.trim().length < 2) { setResults(null); return; }
+    setSearching(true); setError("");
+    try {
+      const data = await apiJson<{ results: SearchResult[] }>(`/commissions/search?q=${encodeURIComponent(q.trim())}`);
+      setResults(data.results);
+    } catch (err: any) {
+      setError(err?.message ?? "Search failed");
+    } finally { setSearching(false); }
+  }
+
+  useEffect(() => {
+    const t = setTimeout(() => { if (query.trim().length >= 2) doSearch(query); else setResults(null); }, 350);
+    return () => clearTimeout(t);
+  }, [query]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black/85 z-50 flex flex-col"
+      onClick={e => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <motion.div
+        initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -20, opacity: 0 }}
+        className="bg-zinc-950 border-b border-zinc-800 px-6 py-5"
+      >
+        <div className="container mx-auto max-w-4xl">
+          <div className="flex items-center gap-4">
+            <Search className="w-5 h-5 text-accent shrink-0" />
+            <input
+              autoFocus
+              type="text"
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              onKeyDown={e => e.key === "Escape" && onClose()}
+              placeholder="Search by policy number, client name or agent…"
+              className="flex-1 bg-transparent text-white text-base placeholder:text-zinc-600 focus:outline-none"
+            />
+            {searching && <Loader2 className="w-4 h-4 text-accent animate-spin shrink-0" />}
+            <button onClick={onClose} className="text-zinc-600 hover:text-zinc-300 shrink-0">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          <p className="text-zinc-700 text-[10px] uppercase tracking-widest mt-2 ml-9">
+            Searches across all periods · min 2 characters
+          </p>
+        </div>
+      </motion.div>
+
+      <div className="flex-1 overflow-y-auto">
+        <div className="container mx-auto max-w-4xl px-6 py-6">
+          {error && (
+            <div className="flex items-center gap-3 px-4 py-3 border border-red-900 bg-red-900/10 text-red-400 text-sm">
+              <AlertTriangle className="w-4 h-4 shrink-0" />{error}
+            </div>
+          )}
+
+          {!error && results === null && query.length < 2 && (
+            <div className="text-center py-20">
+              <Search className="w-10 h-10 text-zinc-800 mx-auto mb-4" />
+              <p className="text-zinc-600 text-sm font-semibold uppercase tracking-widest">Search any sale</p>
+              <p className="text-zinc-700 text-xs mt-2">Enter a policy number, client name or agent to check if a sale was captured</p>
+            </div>
+          )}
+
+          {!error && results !== null && results.length === 0 && (
+            <div className="text-center py-20">
+              <AlertTriangle className="w-8 h-8 text-zinc-700 mx-auto mb-3" />
+              <p className="text-zinc-500 text-sm font-semibold uppercase tracking-widest">No results found</p>
+              <p className="text-zinc-700 text-xs mt-2">"{query}" did not match any entries across any period</p>
+            </div>
+          )}
+
+          {!error && results && results.length > 0 && (
+            <>
+              <p className="text-zinc-600 text-xs uppercase tracking-widest mb-4 font-semibold">
+                {results.length} {results.length === 1 ? "result" : "results"} for "{query}"
+              </p>
+              <div className="border border-zinc-900 overflow-x-auto">
+                <table className="w-full text-sm border-collapse">
+                  <thead>
+                    <tr className="bg-zinc-950 border-b border-zinc-800">
+                      <th className="text-left text-[10px] font-bold uppercase tracking-widest text-zinc-500 px-5 py-3">Period</th>
+                      <th className="text-left text-[10px] font-bold uppercase tracking-widest text-zinc-500 px-4 py-3">Status</th>
+                      <th className="text-left text-[10px] font-bold uppercase tracking-widest text-zinc-500 px-4 py-3">Agent</th>
+                      <th className="text-left text-[10px] font-bold uppercase tracking-widest text-zinc-500 px-4 py-3">Type</th>
+                      <th className="text-left text-[10px] font-bold uppercase tracking-widest text-zinc-500 px-4 py-3">Policy #</th>
+                      <th className="text-left text-[10px] font-bold uppercase tracking-widest text-zinc-500 px-4 py-3">Client</th>
+                      <th className="text-right text-[10px] font-bold uppercase tracking-widest text-zinc-500 px-5 py-3">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {results.map(r => (
+                      <tr key={r.id} className="border-b border-zinc-900 hover:bg-zinc-900 transition-colors">
+                        <td className="px-5 py-3.5">
+                          <p className="text-white font-medium text-xs">{r.period_label}</p>
+                          <p className="text-zinc-600 text-[10px] mt-0.5">{fmtDate(r.period_start)} → {fmtDate(r.period_end)}</p>
+                        </td>
+                        <td className="px-4 py-3.5">
+                          {r.period_status === "finalised" ? (
+                            <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-widest bg-green-900/30 text-green-400 border border-green-800/50 px-2 py-0.5">
+                              <CheckCircle className="w-2.5 h-2.5" /> Paid
+                            </span>
+                          ) : (
+                            <span className="inline-block text-[9px] font-bold uppercase tracking-widest bg-zinc-900 text-zinc-400 border border-zinc-700 px-2 py-0.5">
+                              Active
+                            </span>
+                          )}
+                          {r.period_status === "finalised" && r.payment_date && (
+                            <p className="text-green-700 text-[10px] mt-0.5">{fmtDate(r.payment_date)}</p>
+                          )}
+                        </td>
+                        <td className="px-4 py-3.5 text-zinc-300 font-medium">{r.agent_name}</td>
+                        <td className="px-4 py-3.5">
+                          {r.sale_type === "reg26a" && (
+                            <span className="inline-block text-[9px] font-bold uppercase tracking-widest bg-amber-900/30 text-amber-400 border border-amber-800/50 px-2 py-0.5">Reg 26A</span>
+                          )}
+                          {r.sale_type === "private_order" && (
+                            <span className="inline-block text-[9px] font-bold uppercase tracking-widest bg-blue-900/30 text-blue-400 border border-blue-800/50 px-2 py-0.5">Private</span>
+                          )}
+                          {(r.sale_type === "unknown" || !r.sale_type) && (
+                            <span className="text-zinc-700 text-[10px]">—</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3.5 font-mono text-xs text-zinc-300">{r.policy_number || <span className="text-zinc-700">—</span>}</td>
+                        <td className="px-4 py-3.5 text-zinc-300">{r.client_name || <span className="text-zinc-700">—</span>}</td>
+                        <td className="px-5 py-3.5 text-right text-accent font-semibold tabular-nums">{fmt(r.amount)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
     </motion.div>
   );
 }

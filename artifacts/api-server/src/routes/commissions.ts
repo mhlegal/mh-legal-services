@@ -275,18 +275,50 @@ router.post("/commissions/upload", requirePaymentsAuth, upload.single("file"), a
     const statementId = stmtResult.rows[0].id;
 
     const VALID_TYPES = ["reg26a", "private_order", "unknown"];
-    for (const entry of entries) {
-      if (!entry.agent_name) continue;
-      const saleType = VALID_TYPES.includes(entry.sale_type) ? entry.sale_type : "unknown";
-      await query(
-        `INSERT INTO commission_entries (statement_id, agent_name, policy_number, client_name, amount, sale_type, fortnight_start, fortnight_end)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-        [statementId, entry.agent_name, entry.policy_number || "", entry.client_name || "", entry.amount || 0, saleType, period.period_start, period.period_end]
+
+    const policyNumbersToCheck = entries
+      .map((e) => e.policy_number?.trim())
+      .filter((p): p is string => !!p);
+
+    let existingPolicies = new Set<string>();
+    if (policyNumbersToCheck.length > 0) {
+      const placeholders = policyNumbersToCheck.map((_, i) => `$${i + 1}`).join(", ");
+      const existing = await query<{ policy_number: string }>(
+        `SELECT policy_number FROM commission_entries WHERE policy_number IN (${placeholders})`,
+        policyNumbersToCheck
       );
+      existingPolicies = new Set(existing.rows.map((r) => r.policy_number));
     }
 
-    req.log.info({ statementId, entryCount: entries.length, period_id }, "Commission statement uploaded");
-    res.json({ success: true, statementId, entryCount: entries.length });
+    let entryCount = 0;
+    let skippedCount = 0;
+
+    for (const entry of entries) {
+      if (!entry.agent_name) continue;
+      const policyNum = entry.policy_number?.trim() || "";
+      if (policyNum && existingPolicies.has(policyNum)) {
+        skippedCount++;
+        continue;
+      }
+      const saleType = VALID_TYPES.includes(entry.sale_type) ? entry.sale_type : "unknown";
+      try {
+        await query(
+          `INSERT INTO commission_entries (statement_id, agent_name, policy_number, client_name, amount, sale_type, fortnight_start, fortnight_end)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+          [statementId, entry.agent_name, policyNum, entry.client_name || "", entry.amount || 0, saleType, period.period_start, period.period_end]
+        );
+        entryCount++;
+      } catch (insertErr: any) {
+        if (insertErr?.code === "23505") {
+          skippedCount++;
+        } else {
+          throw insertErr;
+        }
+      }
+    }
+
+    req.log.info({ statementId, entryCount, skippedCount, period_id }, "Commission statement uploaded");
+    res.json({ success: true, statementId, entryCount, skippedCount });
   } catch (err) {
     req.log.error({ err }, "Failed to process commission statement");
     res.status(500).json({ error: "Failed to process file" });

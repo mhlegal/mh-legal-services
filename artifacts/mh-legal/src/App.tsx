@@ -15,6 +15,7 @@ import LegalServices from "@/pages/LegalServices";
 import StudentPortal from "@/pages/StudentPortal";
 import Login from "@/pages/Login";
 import AdminDashboard from "@/pages/AdminDashboard";
+import CommissionsDashboard from "@/pages/CommissionsDashboard";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
@@ -47,6 +48,9 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/admin">
         {() => <ProtectedRoute component={AdminDashboard} />}
+      </Route>
+      <Route path="/commissions">
+        {() => <ProtectedRoute component={CommissionsDashboard} />}
       </Route>
       <Route component={NotFound} />
     </Switch>

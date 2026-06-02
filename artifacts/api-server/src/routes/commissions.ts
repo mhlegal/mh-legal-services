@@ -17,34 +17,9 @@ const PAYMENTS_ALLOWED = [
 ];
 
 function requirePaymentsAuth(req: any, res: any, next: any) {
-  if (!req.session?.adminEmail) {
-    res.status(401).json({ error: "Not authenticated" });
-    return;
-  }
-  if (!PAYMENTS_ALLOWED.includes(req.session.adminEmail)) {
-    res.status(403).json({ error: "Access restricted to authorised administrators" });
-    return;
-  }
+  if (!req.session?.adminEmail) { res.status(401).json({ error: "Not authenticated" }); return; }
+  if (!PAYMENTS_ALLOWED.includes(req.session.adminEmail)) { res.status(403).json({ error: "Access restricted" }); return; }
   next();
-}
-
-function getCurrentFortnight(): { start: Date; end: Date } {
-  const now = new Date();
-  const day = now.getDay();
-  const diffToSat = (day === 6) ? 0 : (day + 1);
-  const thisSat = new Date(now);
-  thisSat.setDate(now.getDate() - diffToSat);
-  thisSat.setHours(14, 0, 0, 0);
-
-  if (now < thisSat) {
-    thisSat.setDate(thisSat.getDate() - 7);
-  }
-
-  const prevSat = new Date(thisSat);
-  prevSat.setDate(thisSat.getDate() - 14);
-  prevSat.setHours(14, 0, 0, 0);
-
-  return { start: prevSat, end: thisSat };
 }
 
 const openaiClient = new OpenAI({
@@ -52,27 +27,14 @@ const openaiClient = new OpenAI({
   apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
 });
 
-async function extractWithAI(text: string): Promise<Array<{
-  agent_name: string;
-  policy_number: string;
-  client_name: string;
-  amount: number;
-}>> {
-  const prompt = `You are extracting commission/payment data from an insurance statement.
+async function extractWithAI(text: string) {
+  const prompt = `Extract ALL commission/payment entries from this insurance statement text.
+Return a JSON array where each item has:
+- agent_name (string)
+- policy_number (string, can be empty)
+- client_name (string, can be empty)
+- amount (number, no currency symbols)
 
-Extract ALL entries from this document. Each entry should have:
-- agent_name: the name of the insurance agent/broker
-- policy_number: the policy number (can be alphanumeric)
-- client_name: the name of the client/policyholder
-- amount: the commission/payment amount as a number (no currency symbols)
-
-Return a JSON array. Example:
-[
-  {"agent_name": "John Smith", "policy_number": "POL123456", "client_name": "Jane Doe", "amount": 1500.00},
-  {"agent_name": "John Smith", "policy_number": "POL789012", "client_name": "Bob Jones", "amount": 750.50}
-]
-
-If a field is missing or unclear, use empty string for text fields and 0 for amount.
 Return ONLY the JSON array, no other text.
 
 Document content:
@@ -83,92 +45,199 @@ ${text.slice(0, 12000)}`;
     max_completion_tokens: 4096,
     messages: [{ role: "user", content: prompt }],
   });
-
   const content = response.choices[0]?.message?.content ?? "[]";
   try {
-    const cleaned = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
-    return JSON.parse(cleaned);
+    return JSON.parse(content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim());
   } catch {
     logger.error({ content }, "Failed to parse AI extraction response");
     return [];
   }
 }
 
-async function extractWithAIFromImage(imageBuffer: Buffer, mimeType: string): Promise<Array<{
-  agent_name: string;
-  policy_number: string;
-  client_name: string;
-  amount: number;
-}>> {
+async function extractWithAIFromImage(imageBuffer: Buffer, mimeType: string) {
   const base64 = imageBuffer.toString("base64");
-  const prompt = `You are extracting commission/payment data from an insurance statement image.
-
-Extract ALL entries from this document. Each entry should have:
-- agent_name: the name of the insurance agent/broker
-- policy_number: the policy number (can be alphanumeric)
-- client_name: the name of the client/policyholder
-- amount: the commission/payment amount as a number (no currency symbols)
-
-Return a JSON array. Example:
-[
-  {"agent_name": "John Smith", "policy_number": "POL123456", "client_name": "Jane Doe", "amount": 1500.00},
-  {"agent_name": "John Smith", "policy_number": "POL789012", "client_name": "Bob Jones", "amount": 750.50}
-]
-
-If a field is missing or unclear, use empty string for text fields and 0 for amount.
+  const prompt = `Extract ALL commission/payment entries from this insurance statement image.
+Return a JSON array where each item has:
+- agent_name (string)
+- policy_number (string, can be empty)
+- client_name (string, can be empty)
+- amount (number, no currency symbols)
 Return ONLY the JSON array, no other text.`;
 
   const response = await openaiClient.chat.completions.create({
     model: "gpt-5.1",
     max_completion_tokens: 4096,
-    messages: [
-      {
-        role: "user",
-        content: [
-          { type: "text", text: prompt },
-          { type: "image_url", image_url: { url: `data:${mimeType};base64,${base64}` } },
-        ],
-      },
-    ],
+    messages: [{
+      role: "user",
+      content: [
+        { type: "text", text: prompt },
+        { type: "image_url", image_url: { url: `data:${mimeType};base64,${base64}` } },
+      ],
+    }],
   });
-
   const content = response.choices[0]?.message?.content ?? "[]";
   try {
-    const cleaned = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
-    return JSON.parse(cleaned);
+    return JSON.parse(content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim());
   } catch {
-    logger.error({ content }, "Failed to parse AI image extraction response");
+    logger.error({ content }, "Failed to parse AI image extraction");
     return [];
   }
 }
 
-router.post("/commissions/upload", requirePaymentsAuth, upload.single("file"), async (req, res) => {
-  if (!req.file) {
-    res.status(400).json({ error: "No file provided" });
+// ─── PERIOD CRUD ───────────────────────────────────────────────────────────
+
+router.get("/commissions/periods", requirePaymentsAuth, async (req, res) => {
+  try {
+    const result = await query(`
+      SELECT cp.*,
+        COUNT(DISTINCT cs.id) AS statement_count,
+        COUNT(ce.id) AS entry_count,
+        COALESCE(SUM(ce.amount), 0) AS total_amount
+      FROM commission_periods cp
+      LEFT JOIN commission_statements cs ON cs.period_id = cp.id
+      LEFT JOIN commission_entries ce ON ce.statement_id = cs.id
+      GROUP BY cp.id
+      ORDER BY cp.period_start DESC
+    `, []);
+    res.json({ periods: result.rows });
+  } catch (err) {
+    req.log.error({ err }, "Failed to fetch periods");
+    res.status(500).json({ error: "Failed to fetch periods" });
+  }
+});
+
+router.post("/commissions/periods", requirePaymentsAuth, async (req, res) => {
+  const { label, period_start, period_end } = req.body;
+  if (!label || !period_start || !period_end) {
+    res.status(400).json({ error: "label, period_start and period_end are required" });
     return;
   }
+  if (new Date(period_start) >= new Date(period_end)) {
+    res.status(400).json({ error: "Start date must be before end date" });
+    return;
+  }
+  try {
+    const result = await query(
+      `INSERT INTO commission_periods (label, period_start, period_end, created_by)
+       VALUES ($1, $2, $3, $4) RETURNING *`,
+      [label.trim(), period_start, period_end, req.session.adminEmail]
+    );
+    res.json({ period: result.rows[0] });
+  } catch (err) {
+    req.log.error({ err }, "Failed to create period");
+    res.status(500).json({ error: "Failed to create period" });
+  }
+});
+
+router.put("/commissions/periods/:id", requirePaymentsAuth, async (req, res) => {
+  const { id } = req.params;
+  const { label, period_start, period_end, action, payment_date, notes } = req.body;
+
+  try {
+    // Check period exists and is not already finalised (unless we're just editing a finalised one)
+    const existing = await query("SELECT * FROM commission_periods WHERE id = $1", [id]);
+    if (!existing.rows[0]) { res.status(404).json({ error: "Period not found" }); return; }
+    const period = existing.rows[0];
+
+    if (action === "finalise") {
+      if (period.status === "finalised") {
+        res.status(400).json({ error: "Period is already finalised" });
+        return;
+      }
+      const pd = payment_date || new Date().toISOString();
+      const result = await query(
+        `UPDATE commission_periods
+         SET status = 'finalised', payment_date = $1, finalised_by = $2, finalised_at = NOW(), notes = COALESCE($3, notes)
+         WHERE id = $4 RETURNING *`,
+        [pd, req.session.adminEmail, notes || null, id]
+      );
+      res.json({ period: result.rows[0] });
+      return;
+    }
+
+    if (action === "reopen") {
+      const result = await query(
+        `UPDATE commission_periods
+         SET status = 'active', payment_date = NULL, finalised_by = NULL, finalised_at = NULL
+         WHERE id = $1 RETURNING *`,
+        [id]
+      );
+      res.json({ period: result.rows[0] });
+      return;
+    }
+
+    // Default: update label/dates
+    if (period.status === "finalised") {
+      res.status(400).json({ error: "Cannot edit dates of a finalised period. Reopen it first." });
+      return;
+    }
+    if (period_start && period_end && new Date(period_start) >= new Date(period_end)) {
+      res.status(400).json({ error: "Start date must be before end date" });
+      return;
+    }
+    const result = await query(
+      `UPDATE commission_periods
+       SET label = COALESCE($1, label),
+           period_start = COALESCE($2, period_start),
+           period_end = COALESCE($3, period_end),
+           notes = COALESCE($4, notes)
+       WHERE id = $5 RETURNING *`,
+      [label ?? null, period_start ?? null, period_end ?? null, notes ?? null, id]
+    );
+    res.json({ period: result.rows[0] });
+  } catch (err) {
+    req.log.error({ err }, "Failed to update period");
+    res.status(500).json({ error: "Failed to update period" });
+  }
+});
+
+router.delete("/commissions/periods/:id", requirePaymentsAuth, async (req, res) => {
+  const { id } = req.params;
+  try {
+    await query("DELETE FROM commission_periods WHERE id = $1", [id]);
+    res.json({ success: true });
+  } catch (err) {
+    req.log.error({ err }, "Failed to delete period");
+    res.status(500).json({ error: "Failed to delete period" });
+  }
+});
+
+// ─── UPLOAD ────────────────────────────────────────────────────────────────
+
+router.post("/commissions/upload", requirePaymentsAuth, upload.single("file"), async (req, res) => {
+  if (!req.file) { res.status(400).json({ error: "No file provided" }); return; }
 
   const { mimetype, originalname, buffer } = req.file;
+  const { period_id } = req.body;
   const isImage = mimetype.startsWith("image/");
   const isPDF = mimetype === "application/pdf";
 
   if (!isImage && !isPDF) {
-    res.status(400).json({ error: "Only PDF or image files (JPG, PNG, etc.) are supported" });
+    res.status(400).json({ error: "Only PDF or image files are supported" });
+    return;
+  }
+  if (!period_id) {
+    res.status(400).json({ error: "A period must be selected before uploading" });
     return;
   }
 
+  // Verify period exists
+  const periodCheck = await query("SELECT * FROM commission_periods WHERE id = $1", [period_id]);
+  if (!periodCheck.rows[0]) { res.status(404).json({ error: "Period not found" }); return; }
+  if (periodCheck.rows[0].status === "finalised") {
+    res.status(400).json({ error: "Cannot upload to a finalised period" });
+    return;
+  }
+  const period = periodCheck.rows[0];
+
   try {
-    const fortnight = getCurrentFortnight();
     let entries: Array<{ agent_name: string; policy_number: string; client_name: string; amount: number }> = [];
 
-    // Extract data with AI first (before storage, so a storage failure doesn't block extraction)
     if (isImage) {
       entries = await extractWithAIFromImage(buffer, mimetype);
     } else {
-      // PDF: extract text with pdf-parse (v1.x, plain Node.js compatible)
       let rawText = "";
       try {
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const pdfParse = require("pdf-parse");
         const data = await pdfParse(buffer);
         rawText = data.text ?? "";
@@ -178,24 +247,22 @@ router.post("/commissions/upload", requirePaymentsAuth, upload.single("file"), a
       if (rawText.trim().length > 50) {
         entries = await extractWithAI(rawText);
       } else {
-        // No usable text — send the first 4KB as plain text hint to the AI
         const hint = buffer.toString("latin1").slice(0, 4000).replace(/[\x00-\x1F\x7F-\x9F]/g, " ");
-        entries = await extractWithAI(`[PDF binary content — extract any readable commission data]\n${hint}`);
+        entries = await extractWithAI(`[PDF binary — extract any readable commission data]\n${hint}`);
       }
     }
 
-    // Save file to object storage (best-effort — don't fail if storage is unavailable)
     let filePath = `statements/${Date.now()}-${encodeURIComponent(originalname)}`;
     try {
       filePath = await objectStorage.uploadBuffer(originalname, mimetype, buffer);
     } catch (err) {
-      logger.warn({ err }, "Object storage upload failed — recording statement path without file");
+      logger.warn({ err }, "Object storage upload failed — using fallback path");
     }
 
     const stmtResult = await query(
-      `INSERT INTO commission_statements (uploaded_by, file_name, file_path, fortnight_start, fortnight_end)
-       VALUES ($1, $2, $3, $4, $5) RETURNING id`,
-      [req.session.adminEmail, originalname, filePath, fortnight.start, fortnight.end]
+      `INSERT INTO commission_statements (uploaded_by, file_name, file_path, fortnight_start, fortnight_end, period_id)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+      [req.session.adminEmail, originalname, filePath, period.period_start, period.period_end, period_id]
     );
     const statementId = stmtResult.rows[0].id;
 
@@ -204,61 +271,55 @@ router.post("/commissions/upload", requirePaymentsAuth, upload.single("file"), a
       await query(
         `INSERT INTO commission_entries (statement_id, agent_name, policy_number, client_name, amount, fortnight_start, fortnight_end)
          VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-        [statementId, entry.agent_name, entry.policy_number || "", entry.client_name || "", entry.amount || 0, fortnight.start, fortnight.end]
+        [statementId, entry.agent_name, entry.policy_number || "", entry.client_name || "", entry.amount || 0, period.period_start, period.period_end]
       );
     }
 
-    req.log.info({ statementId, entryCount: entries.length }, "Commission statement uploaded and parsed");
-    res.json({ success: true, statementId, entryCount: entries.length, fortnight });
+    req.log.info({ statementId, entryCount: entries.length, period_id }, "Commission statement uploaded");
+    res.json({ success: true, statementId, entryCount: entries.length });
   } catch (err) {
     req.log.error({ err }, "Failed to process commission statement");
     res.status(500).json({ error: "Failed to process file" });
   }
 });
 
-router.get("/commissions/summary", requirePaymentsAuth, async (req, res) => {
-  const { fortnightStart } = req.query as { fortnightStart?: string };
+// ─── SUMMARY ───────────────────────────────────────────────────────────────
 
-  let start: Date, end: Date;
-  if (fortnightStart) {
-    start = new Date(fortnightStart);
-    end = new Date(start);
-    end.setDate(end.getDate() + 14);
-  } else {
-    const fn = getCurrentFortnight();
-    start = fn.start;
-    end = fn.end;
-  }
-
+router.get("/commissions/summary/:periodId", requirePaymentsAuth, async (req, res) => {
+  const { periodId } = req.params;
   try {
-    const agentTotals = await query(
-      `SELECT agent_name, SUM(amount) as total_amount, COUNT(*) as policy_count
-       FROM commission_entries
-       WHERE fortnight_start >= $1 AND fortnight_start < $2
-       GROUP BY agent_name
-       ORDER BY total_amount DESC`,
-      [start, end]
-    );
+    const periodResult = await query("SELECT * FROM commission_periods WHERE id = $1", [periodId]);
+    if (!periodResult.rows[0]) { res.status(404).json({ error: "Period not found" }); return; }
+    const period = periodResult.rows[0];
 
-    const allEntries = await query(
-      `SELECT ce.*, cs.file_name, cs.uploaded_by, cs.created_at as statement_uploaded_at
-       FROM commission_entries ce
-       JOIN commission_statements cs ON ce.statement_id = cs.id
-       WHERE ce.fortnight_start >= $1 AND ce.fortnight_start < $2
-       ORDER BY ce.agent_name, ce.created_at DESC`,
-      [start, end]
-    );
+    const agentTotals = await query(`
+      SELECT ce.agent_name,
+        SUM(ce.amount) AS total_amount,
+        COUNT(*) AS policy_count
+      FROM commission_entries ce
+      JOIN commission_statements cs ON ce.statement_id = cs.id
+      WHERE cs.period_id = $1
+      GROUP BY ce.agent_name
+      ORDER BY total_amount DESC
+    `, [periodId]);
 
-    const statements = await query(
-      `SELECT id, file_name, uploaded_by, fortnight_start, fortnight_end, created_at
-       FROM commission_statements
-       WHERE fortnight_start >= $1 AND fortnight_start < $2
-       ORDER BY created_at DESC`,
-      [start, end]
-    );
+    const allEntries = await query(`
+      SELECT ce.*, cs.file_name, cs.uploaded_by, cs.created_at AS statement_uploaded_at
+      FROM commission_entries ce
+      JOIN commission_statements cs ON ce.statement_id = cs.id
+      WHERE cs.period_id = $1
+      ORDER BY ce.agent_name, ce.created_at DESC
+    `, [periodId]);
+
+    const statements = await query(`
+      SELECT id, file_name, uploaded_by, created_at
+      FROM commission_statements
+      WHERE period_id = $1
+      ORDER BY created_at DESC
+    `, [periodId]);
 
     res.json({
-      fortnight: { start, end },
+      period,
       agentTotals: agentTotals.rows,
       entries: allEntries.rows,
       statements: statements.rows,
@@ -269,37 +330,21 @@ router.get("/commissions/summary", requirePaymentsAuth, async (req, res) => {
   }
 });
 
-router.get("/commissions/fortnights", requirePaymentsAuth, async (req, res) => {
-  try {
-    const result = await query(
-      `SELECT DISTINCT fortnight_start, fortnight_end
-       FROM commission_statements
-       ORDER BY fortnight_start DESC
-       LIMIT 24`,
-      []
-    );
-    res.json({ fortnights: result.rows });
-  } catch (err) {
-    req.log.error({ err }, "Failed to fetch fortnights");
-    res.status(500).json({ error: "Failed to fetch fortnights" });
-  }
-});
+// ─── ENTRY / STATEMENT DELETE ───────────────────────────────────────────────
 
 router.delete("/commissions/entries/:id", requirePaymentsAuth, async (req, res) => {
-  const { id } = req.params;
   try {
-    await query("DELETE FROM commission_entries WHERE id = $1", [id]);
+    await query("DELETE FROM commission_entries WHERE id = $1", [req.params.id]);
     res.json({ success: true });
   } catch (err) {
-    req.log.error({ err }, "Failed to delete commission entry");
+    req.log.error({ err }, "Failed to delete entry");
     res.status(500).json({ error: "Failed to delete entry" });
   }
 });
 
 router.delete("/commissions/statements/:id", requirePaymentsAuth, async (req, res) => {
-  const { id } = req.params;
   try {
-    await query("DELETE FROM commission_statements WHERE id = $1", [id]);
+    await query("DELETE FROM commission_statements WHERE id = $1", [req.params.id]);
     res.json({ success: true });
   } catch (err) {
     req.log.error({ err }, "Failed to delete statement");

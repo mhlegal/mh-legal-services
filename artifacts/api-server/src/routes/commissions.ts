@@ -1,12 +1,12 @@
 import { Router } from "express";
 import multer from "multer";
 import OpenAI from "openai";
+import { createRequire } from "module";
 import { query } from "../lib/db.js";
 import { objectStorage } from "../lib/objectStorage.js";
 import { logger } from "../lib/logger.js";
-import fs from "fs";
-import path from "path";
-import os from "os";
+
+const require = createRequire(import.meta.url);
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } });
@@ -158,30 +158,38 @@ router.post("/commissions/upload", requirePaymentsAuth, upload.single("file"), a
   }
 
   try {
-    const filePath = await objectStorage.uploadBuffer(originalname, mimetype, buffer);
     const fortnight = getCurrentFortnight();
     let entries: Array<{ agent_name: string; policy_number: string; client_name: string; amount: number }> = [];
 
+    // Extract data with AI first (before storage, so a storage failure doesn't block extraction)
     if (isImage) {
       entries = await extractWithAIFromImage(buffer, mimetype);
     } else {
+      // PDF: extract text with pdf-parse (v1.x, plain Node.js compatible)
       let rawText = "";
       try {
-        const tmpFile = path.join(os.tmpdir(), `stmt-${Date.now()}.pdf`);
-        fs.writeFileSync(tmpFile, buffer);
-        const pdfParse = (await import("pdf-parse/lib/pdf-parse.js")).default;
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const pdfParse = require("pdf-parse");
         const data = await pdfParse(buffer);
-        rawText = data.text;
-        fs.unlinkSync(tmpFile);
+        rawText = data.text ?? "";
       } catch (err) {
-        logger.warn({ err }, "PDF text extraction failed, falling back to image vision");
-        entries = await extractWithAIFromImage(buffer, "application/pdf");
+        logger.warn({ err }, "PDF text extraction failed");
       }
       if (rawText.trim().length > 50) {
         entries = await extractWithAI(rawText);
-      } else if (entries.length === 0) {
-        entries = await extractWithAIFromImage(buffer, mimetype);
+      } else {
+        // No usable text — send the first 4KB as plain text hint to the AI
+        const hint = buffer.toString("latin1").slice(0, 4000).replace(/[\x00-\x1F\x7F-\x9F]/g, " ");
+        entries = await extractWithAI(`[PDF binary content — extract any readable commission data]\n${hint}`);
       }
+    }
+
+    // Save file to object storage (best-effort — don't fail if storage is unavailable)
+    let filePath = `statements/${Date.now()}-${encodeURIComponent(originalname)}`;
+    try {
+      filePath = await objectStorage.uploadBuffer(originalname, mimetype, buffer);
+    } catch (err) {
+      logger.warn({ err }, "Object storage upload failed — recording statement path without file");
     }
 
     const stmtResult = await query(

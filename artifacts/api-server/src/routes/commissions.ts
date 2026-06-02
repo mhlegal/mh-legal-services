@@ -34,6 +34,10 @@ Return a JSON array where each item has:
 - policy_number (string, can be empty)
 - client_name (string, can be empty)
 - amount (number, no currency symbols)
+- sale_type (string): classify each entry as exactly one of:
+    "reg26a"        — if the entry relates to a Regulation 26A policy (look for "Reg 26A", "Regulation 26A", "26A", "Reg26")
+    "private_order" — if the entry is a private/individual order (look for "Private", "PO", "Private Order", "Priv")
+    "unknown"       — if the type cannot be determined from the document
 
 Return ONLY the JSON array, no other text.
 
@@ -62,6 +66,10 @@ Return a JSON array where each item has:
 - policy_number (string, can be empty)
 - client_name (string, can be empty)
 - amount (number, no currency symbols)
+- sale_type (string): classify each entry as exactly one of:
+    "reg26a"        — if the entry relates to a Regulation 26A policy (look for "Reg 26A", "Regulation 26A", "26A", "Reg26")
+    "private_order" — if the entry is a private/individual order (look for "Private", "PO", "Private Order", "Priv")
+    "unknown"       — if the type cannot be determined
 Return ONLY the JSON array, no other text.`;
 
   const response = await openaiClient.chat.completions.create({
@@ -266,12 +274,14 @@ router.post("/commissions/upload", requirePaymentsAuth, upload.single("file"), a
     );
     const statementId = stmtResult.rows[0].id;
 
+    const VALID_TYPES = ["reg26a", "private_order", "unknown"];
     for (const entry of entries) {
       if (!entry.agent_name) continue;
+      const saleType = VALID_TYPES.includes(entry.sale_type) ? entry.sale_type : "unknown";
       await query(
-        `INSERT INTO commission_entries (statement_id, agent_name, policy_number, client_name, amount, fortnight_start, fortnight_end)
-         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-        [statementId, entry.agent_name, entry.policy_number || "", entry.client_name || "", entry.amount || 0, period.period_start, period.period_end]
+        `INSERT INTO commission_entries (statement_id, agent_name, policy_number, client_name, amount, sale_type, fortnight_start, fortnight_end)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        [statementId, entry.agent_name, entry.policy_number || "", entry.client_name || "", entry.amount || 0, saleType, period.period_start, period.period_end]
       );
     }
 
@@ -295,7 +305,12 @@ router.get("/commissions/summary/:periodId", requirePaymentsAuth, async (req, re
     const agentTotals = await query(`
       SELECT ce.agent_name,
         SUM(ce.amount) AS total_amount,
-        COUNT(*) AS policy_count
+        COUNT(*) AS policy_count,
+        SUM(CASE WHEN ce.sale_type = 'reg26a' THEN ce.amount ELSE 0 END) AS reg26a_amount,
+        SUM(CASE WHEN ce.sale_type = 'private_order' THEN ce.amount ELSE 0 END) AS private_order_amount,
+        SUM(CASE WHEN ce.sale_type = 'unknown' THEN ce.amount ELSE 0 END) AS unknown_amount,
+        COUNT(CASE WHEN ce.sale_type = 'reg26a' THEN 1 END) AS reg26a_count,
+        COUNT(CASE WHEN ce.sale_type = 'private_order' THEN 1 END) AS private_order_count
       FROM commission_entries ce
       JOIN commission_statements cs ON ce.statement_id = cs.id
       WHERE cs.period_id = $1
@@ -308,7 +323,7 @@ router.get("/commissions/summary/:periodId", requirePaymentsAuth, async (req, re
       FROM commission_entries ce
       JOIN commission_statements cs ON ce.statement_id = cs.id
       WHERE cs.period_id = $1
-      ORDER BY ce.agent_name, ce.created_at DESC
+      ORDER BY ce.agent_name, ce.sale_type, ce.created_at DESC
     `, [periodId]);
 
     const statements = await query(`
@@ -318,11 +333,25 @@ router.get("/commissions/summary/:periodId", requirePaymentsAuth, async (req, re
       ORDER BY created_at DESC
     `, [periodId]);
 
+    // Period-level type totals
+    const typeTotals = await query(`
+      SELECT
+        SUM(CASE WHEN ce.sale_type = 'reg26a' THEN ce.amount ELSE 0 END) AS reg26a_total,
+        SUM(CASE WHEN ce.sale_type = 'private_order' THEN ce.amount ELSE 0 END) AS private_order_total,
+        SUM(CASE WHEN ce.sale_type = 'unknown' THEN ce.amount ELSE 0 END) AS unknown_total,
+        COUNT(CASE WHEN ce.sale_type = 'reg26a' THEN 1 END) AS reg26a_count,
+        COUNT(CASE WHEN ce.sale_type = 'private_order' THEN 1 END) AS private_order_count
+      FROM commission_entries ce
+      JOIN commission_statements cs ON ce.statement_id = cs.id
+      WHERE cs.period_id = $1
+    `, [periodId]);
+
     res.json({
       period,
       agentTotals: agentTotals.rows,
       entries: allEntries.rows,
       statements: statements.rows,
+      typeTotals: typeTotals.rows[0] ?? { reg26a_total: 0, private_order_total: 0, unknown_total: 0, reg26a_count: 0, private_order_count: 0 },
     });
   } catch (err) {
     req.log.error({ err }, "Failed to fetch commission summary");

@@ -359,6 +359,39 @@ router.get("/commissions/summary/:periodId", requirePaymentsAuth, async (req, re
   }
 });
 
+// ─── SEARCH ─────────────────────────────────────────────────────────────────
+
+router.get("/commissions/search", requirePaymentsAuth, async (req, res) => {
+  const q = (req.query.q as string ?? "").trim();
+  if (!q || q.length < 2) {
+    res.status(400).json({ error: "Search query must be at least 2 characters" });
+    return;
+  }
+  try {
+    const result = await query(`
+      SELECT
+        ce.id, ce.agent_name, ce.policy_number, ce.client_name,
+        ce.amount, ce.sale_type, ce.created_at,
+        cs.file_name, cs.period_id,
+        cp.label AS period_label, cp.period_start, cp.period_end,
+        cp.status AS period_status, cp.payment_date
+      FROM commission_entries ce
+      JOIN commission_statements cs ON ce.statement_id = cs.id
+      JOIN commission_periods cp ON cs.period_id = cp.id
+      WHERE
+        ce.policy_number ILIKE $1
+        OR ce.client_name ILIKE $1
+        OR ce.agent_name ILIKE $1
+      ORDER BY ce.created_at DESC
+      LIMIT 100
+    `, [`%${q}%`]);
+    res.json({ results: result.rows, query: q });
+  } catch (err) {
+    req.log.error({ err }, "Commission search failed");
+    res.status(500).json({ error: "Search failed" });
+  }
+});
+
 // ─── ENTRY / STATEMENT DELETE ───────────────────────────────────────────────
 
 router.delete("/commissions/entries/:id", requirePaymentsAuth, async (req, res) => {

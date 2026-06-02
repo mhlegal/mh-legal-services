@@ -58,36 +58,39 @@ ${text.slice(0, 12000)}`;
   }
 }
 
-async function extractWithAIFromImage(imageBuffer: Buffer, mimeType: string) {
-  const base64 = imageBuffer.toString("base64");
-  const prompt = `Extract ALL commission/payment entries from this insurance statement image.
+/** Send ALL images in ONE AI call — each entry is tagged with image_index (1-based). */
+async function extractWithAIFromImages(
+  images: Array<{ buffer: Buffer; mimeType: string }>
+): Promise<Array<{ image_index: number; agent_name: string; policy_number: string; client_name: string; amount: number; sale_type?: string }>> {
+  const prompt = `You will be shown ${images.length} insurance statement image(s).
+Extract ALL commission/payment entries from EVERY image.
 Return a JSON array where each item has:
+- image_index (number, 1-based: which image this entry came from)
 - agent_name (string)
 - policy_number (string, can be empty)
 - client_name (string, can be empty)
 - amount (number, no currency symbols)
-- sale_type (string): classify each entry as exactly one of:
-    "reg26a"        — if the entry relates to a Regulation 26A policy (look for "Reg 26A", "Regulation 26A", "26A", "Reg26")
-    "private_order" — if the entry is a private/individual order (look for "Private", "PO", "Private Order", "Priv")
-    "unknown"       — if the type cannot be determined
+- sale_type: exactly one of "reg26a" (Reg 26A / Regulation 26A / 26A), "private_order" (Private / PO / Private Order), or "unknown"
 Return ONLY the JSON array, no other text.`;
+
+  const imageBlocks = images.flatMap((img, i): any[] => [
+    { type: "text", text: `Image ${i + 1}:` },
+    { type: "image_url", image_url: { url: `data:${img.mimeType};base64,${img.buffer.toString("base64")}` } },
+  ]);
 
   const response = await openaiClient.chat.completions.create({
     model: "gpt-5.1",
-    max_completion_tokens: 4096,
+    max_completion_tokens: 8192,
     messages: [{
       role: "user",
-      content: [
-        { type: "text", text: prompt },
-        { type: "image_url", image_url: { url: `data:${mimeType};base64,${base64}` } },
-      ],
+      content: [{ type: "text", text: prompt }, ...imageBlocks],
     }],
   });
   const content = response.choices[0]?.message?.content ?? "[]";
   try {
     return JSON.parse(content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim());
   } catch {
-    logger.error({ content }, "Failed to parse AI image extraction");
+    logger.error({ content }, "Failed to parse AI batch image extraction");
     return [];
   }
 }
@@ -219,7 +222,8 @@ async function extractEntriesFromFile(
 ): Promise<Array<{ agent_name: string; policy_number: string; client_name: string; amount: number; sale_type?: string }>> {
   const isImage = mimetype.startsWith("image/");
   if (isImage) {
-    return extractWithAIFromImage(buffer, mimetype);
+    const results = await extractWithAIFromImages([{ buffer, mimeType: mimetype }]);
+    return results.map(({ image_index: _i, ...e }) => e);
   }
   let rawText = "";
   try {
@@ -264,32 +268,49 @@ router.post("/commissions/upload", requirePaymentsAuth, upload.array("files", 10
   try {
     const VALID_TYPES = ["reg26a", "private_order", "unknown"];
 
-    // Process all files in parallel: extract entries + upload to storage
-    const fileResults = await Promise.all(files.map(async (file) => {
-      const [entries, filePath] = await Promise.all([
-        extractEntriesFromFile(file.buffer, file.mimetype, file.originalname).catch((err) => {
-          logger.warn({ err, file: file.originalname }, "AI extraction failed for file");
-          return [] as Array<{ agent_name: string; policy_number: string; client_name: string; amount: number; sale_type?: string }>;
-        }),
-        objectStorage.uploadBuffer(file.originalname, file.mimetype, file.buffer).catch((err) => {
-          logger.warn({ err }, "Object storage upload failed — using fallback path");
-          return `statements/${Date.now()}-${encodeURIComponent(file.originalname)}`;
-        }),
-      ]);
-
+    // Step 1: Upload all files to storage + create statement records (parallel, fast — no AI yet)
+    const fileRecords = await Promise.all(files.map(async (file) => {
+      const filePath = await objectStorage.uploadBuffer(file.originalname, file.mimetype, file.buffer).catch((err) => {
+        logger.warn({ err }, "Object storage upload failed — using fallback path");
+        return `statements/${Date.now()}-${encodeURIComponent(file.originalname)}`;
+      });
       const stmtResult = await query(
         `INSERT INTO commission_statements (uploaded_by, file_name, file_path, fortnight_start, fortnight_end, period_id)
          VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
         [req.session.adminEmail, file.originalname, filePath, period.period_start, period.period_end, period_id]
       );
-
-      return { statementId: stmtResult.rows[0].id as number, entries };
+      return { file, statementId: stmtResult.rows[0].id as number };
     }));
 
+    // Step 2: Extract entries — images in ONE batched AI call, PDFs separately
+    const imageRecords = fileRecords.filter(r => r.file.mimetype.startsWith("image/"));
+    const pdfRecords = fileRecords.filter(r => r.file.mimetype === "application/pdf");
+
+    const flatEntries: Array<{ statementId: number; agent_name: string; policy_number: string; client_name: string; amount: number; sale_type?: string }> = [];
+
+    // All images → single AI call (avoids N concurrent round-trips timing out)
+    if (imageRecords.length > 0) {
+      const batchedResults = await extractWithAIFromImages(
+        imageRecords.map(r => ({ buffer: r.file.buffer, mimeType: r.file.mimetype }))
+      ).catch((err) => { logger.warn({ err }, "Batch image AI extraction failed"); return []; });
+
+      for (const entry of batchedResults) {
+        const rec = imageRecords[(entry.image_index ?? 1) - 1];
+        if (rec) flatEntries.push({ statementId: rec.statementId, ...entry });
+      }
+    }
+
+    // PDFs → text extraction (parallel is fine; no vision API)
+    if (pdfRecords.length > 0) {
+      const pdfResults = await Promise.all(pdfRecords.map(async r => {
+        const entries = await extractEntriesFromFile(r.file.buffer, r.file.mimetype, r.file.originalname).catch(() => []);
+        return entries.map(e => ({ ...e, statementId: r.statementId }));
+      }));
+      flatEntries.push(...pdfResults.flat());
+    }
+
     // Flatten all entries with their statement IDs
-    const allEntries = fileResults.flatMap(({ statementId, entries }) =>
-      entries.map((e) => ({ ...e, statementId }))
-    );
+    const allEntries = flatEntries;
 
     // Collect all non-empty policy numbers from this batch for DB lookup
     const batchPolicies = allEntries

@@ -5,10 +5,12 @@ import {
   LogOut, Users, Filter, Download, Shield,
   RefreshCw, CheckCircle, XCircle, MapPin,
   FileText, ChevronDown, Eye, AlertTriangle, ArrowRight,
-  BarChart2, UserCheck, Plus, Trash2, Activity, TrendingUp,
+  BarChart2, UserCheck, Plus, Trash2, Activity, TrendingUp, DollarSign,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { apiJson } from "@/lib/api";
+
+const PAYMENTS_ALLOWED = ["ngobesesimangaliso47@gmail.com", "mhlopheholdings@gmail.com"];
 
 const PROVINCES = [
   "all", "Eastern Cape", "Free State", "Gauteng", "KwaZulu-Natal",
@@ -78,7 +80,15 @@ export default function AdminDashboard() {
               <span className="text-xs font-semibold uppercase tracking-widest text-zinc-400">Manager Dashboard</span>
             </div>
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
+            {user?.email && PAYMENTS_ALLOWED.includes(user.email) && (
+              <Link href="/commissions">
+                <div className="flex items-center gap-2 border border-accent/40 text-accent hover:bg-accent/10 text-xs uppercase tracking-wider px-4 py-2 transition-colors font-semibold cursor-pointer">
+                  <DollarSign className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Commissions</span>
+                </div>
+              </Link>
+            )}
             <div className="hidden sm:block text-right">
               <p className="text-white text-sm font-medium">{user?.email}</p>
               <p className="text-accent text-xs font-semibold uppercase tracking-wider">

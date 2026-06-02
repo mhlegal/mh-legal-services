@@ -41,6 +41,7 @@ app.use(
     secret: process.env.SESSION_SECRET ?? "mhlegal-secret-fallback",
     resave: false,
     saveUninitialized: false,
+    rolling: true,
     cookie: {
       secure: true,
       httpOnly: true,

@@ -20,14 +20,23 @@ interface Period {
   notes: string | null; created_by: string; created_at: string;
   entry_count: string; total_amount: string; statement_count: string;
 }
-interface AgentTotal { agent_name: string; total_amount: string; policy_count: string; }
+interface AgentTotal {
+  agent_name: string; total_amount: string; policy_count: string;
+  reg26a_amount: string; private_order_amount: string; unknown_amount: string;
+  reg26a_count: string; private_order_count: string;
+}
+interface TypeTotals {
+  reg26a_total: string; private_order_total: string; unknown_total: string;
+  reg26a_count: string; private_order_count: string;
+}
 interface Entry {
   id: number; statement_id: number; agent_name: string;
   policy_number: string; client_name: string; amount: string;
+  sale_type: "reg26a" | "private_order" | "unknown";
   file_name: string;
 }
 interface Statement { id: number; file_name: string; uploaded_by: string; created_at: string; }
-interface Summary { period: Period; agentTotals: AgentTotal[]; entries: Entry[]; statements: Statement[]; }
+interface Summary { period: Period; agentTotals: AgentTotal[]; entries: Entry[]; statements: Statement[]; typeTotals: TypeTotals; }
 
 const fmt = (v: string | number) =>
   `R ${Number(v).toLocaleString("en-ZA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -262,26 +271,76 @@ function CommissionsContent() {
 
       {/* ── Stats ── */}
       {selectedPeriodId && (
-        <div className="grid grid-cols-3 gap-4 mb-10">
-          <div className={`border p-6 ${isFinalised ? "border-green-800 bg-green-900/5" : "border-accent bg-accent/5"}`}>
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-accent/70">Total Commissions</span>
-              <DollarSign className="w-4 h-4 text-accent/50" />
+        <>
+          <div className="grid grid-cols-3 gap-4 mb-4">
+            <div className={`border p-6 ${isFinalised ? "border-green-800 bg-green-900/5" : "border-accent bg-accent/5"}`}>
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-accent/70">Total Commissions</span>
+                <DollarSign className="w-4 h-4 text-accent/50" />
+              </div>
+              <p className="text-2xl font-serif font-bold text-accent">{fmt(totalCommission)}</p>
+              {isFinalised && selectedPeriod?.payment_date && (
+                <p className="text-green-500 text-[10px] uppercase tracking-wider mt-2 font-semibold">Paid {fmtDate(selectedPeriod.payment_date)}</p>
+              )}
             </div>
-            <p className="text-2xl font-serif font-bold text-accent">{fmt(totalCommission)}</p>
-            {isFinalised && selectedPeriod?.payment_date && (
-              <p className="text-green-500 text-[10px] uppercase tracking-wider mt-2 font-semibold">Paid {fmtDate(selectedPeriod.payment_date)}</p>
-            )}
+            <div className="border border-zinc-900 bg-zinc-950 p-6">
+              <div className="flex items-center justify-between mb-3"><span className="text-[10px] font-bold uppercase tracking-widest text-zinc-600">Agents</span><Users className="w-4 h-4 text-zinc-700" /></div>
+              <p className="text-2xl font-serif font-bold text-white">{summary?.agentTotals.length ?? 0}</p>
+            </div>
+            <div className="border border-zinc-900 bg-zinc-950 p-6">
+              <div className="flex items-center justify-between mb-3"><span className="text-[10px] font-bold uppercase tracking-widest text-zinc-600">Policy Entries</span><FileText className="w-4 h-4 text-zinc-700" /></div>
+              <p className="text-2xl font-serif font-bold text-white">{summary?.entries.length ?? 0}</p>
+            </div>
           </div>
-          <div className="border border-zinc-900 bg-zinc-950 p-6">
-            <div className="flex items-center justify-between mb-3"><span className="text-[10px] font-bold uppercase tracking-widest text-zinc-600">Agents</span><Users className="w-4 h-4 text-zinc-700" /></div>
-            <p className="text-2xl font-serif font-bold text-white">{summary?.agentTotals.length ?? 0}</p>
-          </div>
-          <div className="border border-zinc-900 bg-zinc-950 p-6">
-            <div className="flex items-center justify-between mb-3"><span className="text-[10px] font-bold uppercase tracking-widest text-zinc-600">Policy Entries</span><FileText className="w-4 h-4 text-zinc-700" /></div>
-            <p className="text-2xl font-serif font-bold text-white">{summary?.entries.length ?? 0}</p>
-          </div>
-        </div>
+          {/* ── Sale type split ── */}
+          {summary && (summary.entries.length > 0) && (
+            <div className="grid grid-cols-2 gap-4 mb-10">
+              <div className="border border-zinc-800 bg-zinc-950 p-5 flex items-center gap-5">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="inline-block text-[9px] font-bold uppercase tracking-widest bg-amber-900/30 text-amber-400 border border-amber-800/50 px-2 py-0.5">Reg 26A</span>
+                    <span className="text-zinc-700 text-[10px]">{summary.typeTotals.reg26a_count} {Number(summary.typeTotals.reg26a_count) === 1 ? "policy" : "policies"}</span>
+                  </div>
+                  <p className="text-xl font-serif font-bold text-amber-400">{fmt(summary.typeTotals.reg26a_total)}</p>
+                </div>
+                <div className="h-12 w-px bg-zinc-800" />
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="inline-block text-[9px] font-bold uppercase tracking-widest bg-blue-900/30 text-blue-400 border border-blue-800/50 px-2 py-0.5">Private Order</span>
+                    <span className="text-zinc-700 text-[10px]">{summary.typeTotals.private_order_count} {Number(summary.typeTotals.private_order_count) === 1 ? "policy" : "policies"}</span>
+                  </div>
+                  <p className="text-xl font-serif font-bold text-blue-400">{fmt(summary.typeTotals.private_order_total)}</p>
+                </div>
+              </div>
+              <div className="border border-zinc-900 bg-zinc-950/50 p-5 flex items-center">
+                <div className="w-full">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-600 mb-3">Type Breakdown</p>
+                  <div className="space-y-2">
+                    {Number(summary.typeTotals.reg26a_total) > 0 && (
+                      <div className="flex items-center gap-2">
+                        <div className="h-1.5 bg-amber-500/70 rounded-full" style={{ width: `${Math.round(Number(summary.typeTotals.reg26a_total) / totalCommission * 100)}%`, minWidth: "4px", maxWidth: "100%" }} />
+                        <span className="text-zinc-500 text-[10px] whitespace-nowrap">{Math.round(Number(summary.typeTotals.reg26a_total) / totalCommission * 100)}% Reg 26A</span>
+                      </div>
+                    )}
+                    {Number(summary.typeTotals.private_order_total) > 0 && (
+                      <div className="flex items-center gap-2">
+                        <div className="h-1.5 bg-blue-500/70 rounded-full" style={{ width: `${Math.round(Number(summary.typeTotals.private_order_total) / totalCommission * 100)}%`, minWidth: "4px", maxWidth: "100%" }} />
+                        <span className="text-zinc-500 text-[10px] whitespace-nowrap">{Math.round(Number(summary.typeTotals.private_order_total) / totalCommission * 100)}% Private Order</span>
+                      </div>
+                    )}
+                    {Number(summary.typeTotals.unknown_total) > 0 && (
+                      <div className="flex items-center gap-2">
+                        <div className="h-1.5 bg-zinc-600/70 rounded-full" style={{ width: `${Math.round(Number(summary.typeTotals.unknown_total) / totalCommission * 100)}%`, minWidth: "4px", maxWidth: "100%" }} />
+                        <span className="text-zinc-500 text-[10px] whitespace-nowrap">{Math.round(Number(summary.typeTotals.unknown_total) / totalCommission * 100)}% Unclassified</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          {!(summary && summary.entries.length > 0) && <div className="mb-10" />}
+        </>
       )}
 
       {/* ── Upload zone (only for active periods) ── */}
@@ -364,6 +423,7 @@ function CommissionsContent() {
                 <thead>
                   <tr className="bg-zinc-950 border-b border-zinc-800">
                     <th className="text-left text-[10px] font-bold uppercase tracking-widest text-zinc-500 px-5 py-4">Agent</th>
+                    <th className="text-left text-[10px] font-bold uppercase tracking-widest text-zinc-500 px-4 py-4">Type</th>
                     <th className="text-left text-[10px] font-bold uppercase tracking-widest text-zinc-500 px-4 py-4">Policy Number</th>
                     <th className="text-left text-[10px] font-bold uppercase tracking-widest text-zinc-500 px-4 py-4">Client Name</th>
                     <th className="text-left text-[10px] font-bold uppercase tracking-widest text-zinc-500 px-4 py-4">Statement</th>
@@ -379,6 +439,17 @@ function CommissionsContent() {
                         <tr key={entry.id} className={`border-b border-zinc-900 hover:bg-zinc-950 transition-colors ${ai % 2 === 1 ? "bg-zinc-950/30" : ""}`}>
                           <td className="px-5 py-3.5 align-top">
                             {ei === 0 ? <span className="text-white font-semibold">{agent.agent_name}</span> : <span className="invisible">·</span>}
+                          </td>
+                          <td className="px-4 py-3.5">
+                            {entry.sale_type === "reg26a" && (
+                              <span className="inline-block text-[9px] font-bold uppercase tracking-widest bg-amber-900/30 text-amber-400 border border-amber-800/50 px-2 py-0.5 whitespace-nowrap">Reg 26A</span>
+                            )}
+                            {entry.sale_type === "private_order" && (
+                              <span className="inline-block text-[9px] font-bold uppercase tracking-widest bg-blue-900/30 text-blue-400 border border-blue-800/50 px-2 py-0.5 whitespace-nowrap">Private Order</span>
+                            )}
+                            {(entry.sale_type === "unknown" || !entry.sale_type) && (
+                              <span className="text-zinc-700 text-[10px]">—</span>
+                            )}
                           </td>
                           <td className="px-4 py-3.5 font-mono text-xs text-zinc-300">{entry.policy_number || <span className="text-zinc-700">—</span>}</td>
                           <td className="px-4 py-3.5 text-zinc-300">{entry.client_name || <span className="text-zinc-700">—</span>}</td>
@@ -397,8 +468,16 @@ function CommissionsContent() {
                   <tbody>
                     {summary.agentTotals.map(agent => (
                       <tr key={`sub-${agent.agent_name}`} className="border-b border-zinc-900 bg-zinc-900/40">
-                        <td colSpan={4} className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-zinc-500">
-                          {agent.agent_name} — subtotal ({agent.policy_count} {Number(agent.policy_count) === 1 ? "policy" : "policies"})
+                        <td className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-zinc-500">
+                          {agent.agent_name}
+                        </td>
+                        <td colSpan={4} className="px-4 py-3 text-[10px] text-zinc-600 space-x-3">
+                          {Number(agent.reg26a_amount) > 0 && (
+                            <span><span className="text-amber-600">Reg 26A</span> {fmt(agent.reg26a_amount)} ({agent.reg26a_count})</span>
+                          )}
+                          {Number(agent.private_order_amount) > 0 && (
+                            <span><span className="text-blue-600">Private</span> {fmt(agent.private_order_amount)} ({agent.private_order_count})</span>
+                          )}
                         </td>
                         <td className="px-5 py-3 text-right font-bold text-white tabular-nums">{fmt(agent.total_amount)}</td>
                         {!isFinalised && <td className="px-3 py-3"></td>}
@@ -407,14 +486,27 @@ function CommissionsContent() {
                   </tbody>
                 )}
                 <tfoot>
+                  <tr className="bg-zinc-900/60 border-t border-zinc-800">
+                    <td className="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-zinc-500">Type Totals</td>
+                    <td colSpan={4} className="px-4 py-3 text-[10px] text-zinc-500 space-x-4">
+                      {Number(summary.typeTotals.reg26a_total) > 0 && (
+                        <span><span className="text-amber-500">Reg 26A:</span> {fmt(summary.typeTotals.reg26a_total)}</span>
+                      )}
+                      {Number(summary.typeTotals.private_order_total) > 0 && (
+                        <span><span className="text-blue-400">Private Order:</span> {fmt(summary.typeTotals.private_order_total)}</span>
+                      )}
+                    </td>
+                    <td className="px-5 py-3" />
+                    {!isFinalised && <td className="px-3 py-3" />}
+                  </tr>
                   <tr className="bg-accent/10 border-t-2 border-accent/40">
-                    <td colSpan={4} className="px-5 py-4 font-bold uppercase tracking-widest text-xs text-accent">Grand Total</td>
+                    <td colSpan={5} className="px-5 py-4 font-bold uppercase tracking-widest text-xs text-accent">Grand Total</td>
                     <td className="px-5 py-4 text-right font-serif font-bold text-accent text-lg tabular-nums">{fmt(totalCommission)}</td>
                     {!isFinalised && <td className="px-3 py-4"></td>}
                   </tr>
                   {isFinalised && selectedPeriod?.payment_date && (
                     <tr className="bg-green-900/10 border-t border-green-900">
-                      <td colSpan={5} className="px-5 py-3 text-xs text-green-400 font-semibold">
+                      <td colSpan={6} className="px-5 py-3 text-xs text-green-400 font-semibold">
                         ✓ Payment of {fmt(totalCommission)} processed on {fmtDate(selectedPeriod.payment_date)} by {selectedPeriod.finalised_by}
                       </td>
                     </tr>

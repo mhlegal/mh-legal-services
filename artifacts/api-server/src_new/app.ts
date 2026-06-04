@@ -3,7 +3,6 @@ import cors from "cors";
 import { pinoHttp } from "pino-http";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
-import { join } from "path";
 import { pool } from "./lib/db.js";
 import router from "./routes/index.js";
 import { logger } from "./lib/logger.js";
@@ -69,11 +68,6 @@ app.use(
 );
 
 app.use("/api", router);
-
-// Serve locally-uploaded files (fallback when BLOB_READ_WRITE_TOKEN is not set).
-// Files have random hex names so they are unguessable; safe to serve publicly.
-const UPLOADS_DIR = process.env.UPLOADS_DIR ?? join(process.cwd(), "data", "uploads");
-app.use("/api/uploads", express.static(UPLOADS_DIR));
 
 // Run migrations on every cold start — idempotent, safe to repeat
 runMigrations().catch((err) => logger.error({ err }, "Migration runner failed"));

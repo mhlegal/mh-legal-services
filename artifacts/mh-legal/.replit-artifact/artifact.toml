@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "MH LEGAL"
+version = "1.0.0"
+id = "artifacts/mh-legal"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22776
+
+[services.development]
+run = "pnpm --filter @workspace/mh-legal run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/mh-legal", "run", "build" ]
+publicDir = "artifacts/mh-legal/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22776"
+BASE_PATH = "/"

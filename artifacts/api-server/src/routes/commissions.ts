@@ -28,8 +28,8 @@ function requirePaymentsAuth(req: any, res: any, next: any) {
 let _openaiClient: OpenAI | null = null;
 function getOpenAIClient(): OpenAI {
   if (!_openaiClient) {
-    const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY;
-    if (!apiKey) throw new Error("AI_INTEGRATIONS_OPENAI_API_KEY env var is not set");
+    const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY ?? process.env.OPENAI_API_KEY;
+    if (!apiKey) throw new Error("No OpenAI API key configured (set OPENAI_API_KEY)");
     _openaiClient = new OpenAI({
       baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
       apiKey,

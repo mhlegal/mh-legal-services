@@ -10,12 +10,22 @@
 
 import { BASE } from "@/lib/api";
 
-async function directUpload(file: File, onProgress?: (msg: string) => void): Promise<string> {
+/**
+ * directUpload — POST a file to the API.
+ * Uses /api/upload/public for unauthenticated callers (e.g. StudentPortal),
+ * or /api/upload/direct for authenticated managers.
+ */
+async function directUpload(
+  file: File,
+  onProgress?: (msg: string) => void,
+  isPublic = false,
+): Promise<string> {
   onProgress?.("Uploading file…");
   const formData = new FormData();
   formData.append("file", file);
 
-  const res = await fetch(`${BASE}/api/upload/direct`, {
+  const endpoint = isPublic ? `${BASE}/api/upload/public` : `${BASE}/api/upload/direct`;
+  const res = await fetch(endpoint, {
     method: "POST",
     credentials: "include",
     body: formData,
@@ -30,32 +40,37 @@ async function directUpload(file: File, onProgress?: (msg: string) => void): Pro
   return data.url;
 }
 
+/**
+ * uploadFile — uploads a single file.
+ * @param isPublic  Set true for unauthenticated callers (e.g. StudentPortal).
+ *                  Omit or pass false for authenticated manager uploads.
+ */
 export async function uploadFile(
   file: File,
-  onProgress?: (msg: string) => void
+  onProgress?: (msg: string) => void,
+  isPublic = false,
 ): Promise<string> {
   onProgress?.("Uploading…");
 
-  // Try Vercel Blob first
-  try {
-    const { upload } = await import("@vercel/blob/client");
-    const blob = await upload(file.name, file, {
-      access: "public",
-      handleUploadUrl: `${BASE}/api/blob/upload`,
-    });
-    return blob.url;
-  } catch (err: any) {
-    // BLOB_NOT_CONFIGURED means the server doesn't have a Vercel Blob token —
-    // fall back to the direct upload endpoint which works on any host.
-    const isBlobMissing =
-      err?.message?.includes("BLOB_NOT_CONFIGURED") ||
-      err?.message?.includes("missing token") ||
-      err?.message?.includes("BLOB_READ_WRITE_TOKEN");
-
-    if (!isBlobMissing) throw err;
+  // Try Vercel Blob first (only for authenticated uploads — requires server token)
+  if (!isPublic) {
+    try {
+      const { upload } = await import("@vercel/blob/client");
+      const blob = await upload(file.name, file, {
+        access: "public",
+        handleUploadUrl: `${BASE}/api/blob/upload`,
+      });
+      return blob.url;
+    } catch (err: any) {
+      const isBlobMissing =
+        err?.message?.includes("BLOB_NOT_CONFIGURED") ||
+        err?.message?.includes("missing token") ||
+        err?.message?.includes("BLOB_READ_WRITE_TOKEN");
+      if (!isBlobMissing) throw err;
+    }
   }
 
-  return directUpload(file, onProgress);
+  return directUpload(file, onProgress, isPublic);
 }
 
 /**
@@ -94,7 +109,7 @@ export async function uploadMultipleFiles(
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
     onProgress?.(files.length === 1 ? "Uploading file…" : `Uploading file ${i + 1} of ${files.length}…`);
-    const url = await directUpload(file);
+    const url = await directUpload(file, undefined, false);
     results.push({ file, url });
   }
   return results;

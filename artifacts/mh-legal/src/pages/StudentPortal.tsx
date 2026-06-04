@@ -42,7 +42,7 @@ export default function StudentPortal() {
   async function uploadFile(file: File): Promise<string | undefined> {
     try {
       setUploadProgress(20);
-      const url = await uploadToStorage(file, () => setUploadProgress(60));
+      const url = await uploadToStorage(file, () => setUploadProgress(60), true);
       setUploadProgress(100);
       return url;
     } catch (err: any) {

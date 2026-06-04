@@ -55,4 +55,34 @@ router.post(
   }
 );
 
+// ─── Public upload (no auth) — for unauthenticated users e.g. StudentPortal ─
+// Rate-limited by file size only. Allowed types: PDF, JPEG, PNG, WEBP.
+const ALLOWED_PUBLIC_MIME = new Set(["application/pdf", "image/jpeg", "image/png", "image/webp"]);
+
+router.post(
+  "/upload/public",
+  upload.single("file"),
+  async (req, res) => {
+    if (!req.file) {
+      res.status(400).json({ error: "No file received" });
+      return;
+    }
+    if (!ALLOWED_PUBLIC_MIME.has(req.file.mimetype)) {
+      res.status(400).json({ error: "Only PDF, JPEG, PNG and WEBP files are allowed" });
+      return;
+    }
+    try {
+      const url = await objectStorage.uploadBuffer(
+        req.file.originalname,
+        req.file.mimetype,
+        req.file.buffer
+      );
+      res.json({ url });
+    } catch (err: any) {
+      req.log.error({ err }, "Public upload failed");
+      res.status(500).json({ error: err?.message ?? "Upload failed" });
+    }
+  }
+);
+
 export default router;

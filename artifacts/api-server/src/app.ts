@@ -1,4 +1,4 @@
-import express, { type Express } from "express";
+import express from "express";
 import cors from "cors";
 import { pinoHttp } from "pino-http";
 import session from "express-session";
@@ -9,7 +9,7 @@ import router from "./routes/index.js";
 import { logger } from "./lib/logger.js";
 import { runMigrations } from "./lib/migrate.js";
 
-const app: Express = express();
+const app = express();
 const PgSession = connectPgSimple(session);
 
 // Trust reverse proxy so secure cookies work (Replit or Vercel)
@@ -50,7 +50,7 @@ app.use(express.urlencoded({ extended: true }));
 // Session cookie:
 // - sameSite "lax"  → same-origin Vercel deploy (frontend + API on same domain)
 // - sameSite "none" → cross-origin setup (set COOKIE_SAME_SITE=none in env)
-const sameSite = (process.env.COOKIE_SAME_SITE as "lax" | "none" | "strict" | undefined) ?? "lax";
+const sameSite = (process.env.COOKIE_SAME_SITE as "lax" | "none" | "strict" | undefined) ?? "none";
 
 app.use(
   session({

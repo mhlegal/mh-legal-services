@@ -8,6 +8,10 @@ pnpm install --frozen-lockfile
 # single source of truth for schema changes in this project.
 
 if [ -n "$GITHUB_TOKEN" ]; then
-  git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/mhlegal/mh-legal-services.git"
+  if git remote get-url origin > /dev/null 2>&1; then
+    git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/mhlegal/mh-legal-services.git"
+  else
+    git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/mhlegal/mh-legal-services.git"
+  fi
   git push --force origin main
 fi

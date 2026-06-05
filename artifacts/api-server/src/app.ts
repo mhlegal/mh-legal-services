@@ -54,7 +54,7 @@ const sameSite = (process.env.COOKIE_SAME_SITE as "lax" | "none" | "strict" | un
 
 app.use(
   session({
-    store: new PgSession({ pool, tableName: "session", createTableIfMissing: true }),
+    store: new PgSession({ pool, tableName: "session", createTableIfMissing: false }),
     secret: process.env.SESSION_SECRET ?? "mhlegal-secret-fallback",
     resave: false,
     saveUninitialized: false,

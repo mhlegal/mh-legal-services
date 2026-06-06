@@ -1,4 +1,5 @@
 import { Router } from "express";
+import type { Request, Response } from "express";
 import { randomBytes } from "crypto";
 import { query } from "../lib/db.js";
 import { sendSecurityAlert, sendPasswordReset } from "../lib/email.js";
@@ -51,7 +52,7 @@ async function getAdminPassword(): Promise<string> {
 
 // ─── LOGIN ─────────────────────────────────────────────────────────────────
 
-router.post("/auth/login", async (req, res) => {
+router.post("/auth/login", async (req: Request, res: Response) => {
   const { email, password } = req.body as { email: string; password: string };
 
   if (!email || !password) {
@@ -104,8 +105,8 @@ router.post("/auth/login", async (req, res) => {
 
 // ─── LOGOUT ────────────────────────────────────────────────────────────────
 
-router.post("/auth/logout", (req, res) => {
-  req.session.destroy((err) => {
+router.post("/auth/logout", (req: Request, res: Response) => {
+  req.session.destroy((err: Error | null) => {
     if (err) {
       req.log.error({ err }, "Session destroy failed");
       res.status(500).json({ error: "Logout failed" });
@@ -118,7 +119,7 @@ router.post("/auth/logout", (req, res) => {
 
 // ─── ME ────────────────────────────────────────────────────────────────────
 
-router.get("/auth/me", (req, res) => {
+router.get("/auth/me", (req: Request, res: Response) => {
   if (!req.session.adminEmail) {
     res.status(401).json({ error: "Not authenticated" });
     return;
@@ -134,7 +135,7 @@ router.get("/auth/me", (req, res) => {
 // a reset link. Always returns 200 regardless of whether the email is valid
 // (prevents email enumeration).
 
-router.post("/auth/forgot-password", async (req, res) => {
+router.post("/auth/forgot-password", async (req: Request, res: Response) => {
   const { email } = req.body as { email: string };
 
   if (!email) {
@@ -183,7 +184,7 @@ router.post("/auth/forgot-password", async (req, res) => {
 
 // ─── RESET PASSWORD ────────────────────────────────────────────────────────
 
-router.post("/auth/reset-password", async (req, res) => {
+router.post("/auth/reset-password", async (req: Request, res: Response) => {
   const { token, password } = req.body as { token: string; password: string };
 
   if (!token || !password) {

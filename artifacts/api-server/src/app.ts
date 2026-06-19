@@ -50,11 +50,15 @@ app.use(express.urlencoded({ extended: true }));
 // Session cookie:
 // - sameSite "lax"  → same-origin Vercel deploy (frontend + API on same domain)
 // - sameSite "none" → cross-origin setup (set COOKIE_SAME_SITE=none in env)
-const sameSite = (process.env.COOKIE_SAME_SITE as "lax" | "none" | "strict" | undefined) ?? "none";
+const sameSite = (process.env.COOKIE_SAME_SITE as "lax" | "none" | "strict" | undefined) ?? "lax";
 
 app.use(
   session({
-    store: new PgSession({ pool, tableName: "session", createTableIfMissing: false }),
+    // createTableIfMissing: true lets connect-pg-simple create the session table
+    // on its own if it doesn't exist yet (e.g. fresh DB or first cold start before
+    // runMigrations() has finished). runMigrations() still creates it too, but this
+    // eliminates the race condition window on the very first request.
+    store: new PgSession({ pool, tableName: "session", createTableIfMissing: true }),
     secret: process.env.SESSION_SECRET ?? "mhlegal-secret-fallback",
     resave: false,
     saveUninitialized: false,

@@ -9,8 +9,15 @@
       "noEmit": true,
       "noEmitOnError": false,
       "strict": false,
-      "types": ["node"]
+      "types": ["node"],
+      "typeRoots": [
+        "../artifacts/api-server/node_modules/@types",
+        "../node_modules/@types"
+      ]
     },
-    "include": ["./*.ts"]
+    "include": [
+      "./*.ts",
+      "../artifacts/api-server/src/types/*.d.ts"
+    ]
   }
   

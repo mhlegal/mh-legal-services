@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "noEmit": false,
+    "outDir": "dist",
+    "types": ["node"]
+  },
+  "include": [
+    "./*.ts",
+    "../artifacts/api-server/src/**/*.ts"
+  ]
+}

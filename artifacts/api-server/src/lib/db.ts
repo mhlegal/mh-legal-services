@@ -1,25 +1,32 @@
 import pg, { type QueryResultRow } from "pg";
-import { logger } from "./logger.js";
+  import { logger } from "./logger.js";
 
-const { Pool } = pg;
+  const { Pool } = pg;
 
-export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
-});
+  export const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
+    // Serverless-appropriate limits: each Vercel invocation shares this module-level
+    // pool across warm requests, but connections are NOT released between invocations.
+    // Keep max low to avoid exhausting the DB connection limit.
+    max: 2,
+    connectionTimeoutMillis: 5000,
+    idleTimeoutMillis: 30000,
+  });
 
-pool.on("error", (err) => {
-  logger.error({ err }, "Unexpected PostgreSQL pool error");
-});
+  pool.on("error", (err) => {
+    logger.error({ err }, "Unexpected PostgreSQL pool error");
+  });
 
-export async function query<T extends QueryResultRow = QueryResultRow>(
-  text: string,
-  params?: unknown[]
-) {
-  const client = await pool.connect();
-  try {
-    return await client.query<T>(text, params);
-  } finally {
-    client.release();
+  export async function query<T extends QueryResultRow = QueryResultRow>(
+    text: string,
+    params?: unknown[]
+  ) {
+    const client = await pool.connect();
+    try {
+      return await client.query<T>(text, params);
+    } finally {
+      client.release();
+    }
   }
-}
+  
